@@ -565,7 +565,7 @@ function App() {
       let headerLine = null;
       for (const line of lines) {
         const parts = parseCSVLine(line);
-        if (parts.includes('A.Hòa') || parts.includes('Ngày giờ thi đấu')) {
+        if (parts.includes('Ngày giờ thi đấu')) {
           headerLine = parts;
           break;
         }
