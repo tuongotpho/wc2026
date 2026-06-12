@@ -13,14 +13,14 @@ import {
   where 
 } from "firebase/firestore";
 
-// Firebase Configuration via environment variables
+// Firebase Configuration with user provided credentials as fallback
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
-  appId: import.meta.env.VITE_FIREBASE_APP_ID
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || "AIzaSyCoOQGZqZFdA82V2EDIa07hXbmMW1ugQoo",
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || "studio-856395995-d843d.firebaseapp.com",
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || "studio-856395995-d843d",
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || "studio-856395995-d843d.firebasestorage.app",
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || "106909967902",
+  appId: import.meta.env.VITE_FIREBASE_APP_ID || "1:106909967902:web:d4716b6b7ee575b5b6700f"
 };
 
 // Check if a valid config is provided (at least projectId is required)
