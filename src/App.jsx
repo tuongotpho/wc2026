@@ -529,6 +529,93 @@ function App() {
     showToast(`Đã cập nhật tỷ số trận đấu #${matchId}`, "success");
   };
 
+  // 6b. Sync actual scores from Google Sheet
+  const syncWithGoogleSheet = async () => {
+    setIsSyncing(true);
+    showToast("Đang đồng bộ tỉ số từ Google Sheet...", "info");
+    const sheetUrl = "https://docs.google.com/spreadsheets/d/14YaeCAFpXI9rYDPNSOQ_lnxkTElaz6Keu6frp6DWgWU/export?format=csv&gid=327062778";
+    
+    try {
+      const response = await fetch(sheetUrl);
+      if (!response.ok) throw new Error("Không thể tải dữ liệu từ Google Sheet");
+      
+      const csvText = await response.text();
+      const lines = csvText.split(/\r?\n/);
+      
+      const parseCSVLine = (text) => {
+        const result = [];
+        let current = '';
+        let inQuotes = false;
+        for (let i = 0; i < text.length; i++) {
+          const char = text[i];
+          if (char === '"') {
+            inQuotes = !inQuotes;
+          } else if (char === ',' && !inQuotes) {
+            result.push(current.trim());
+            current = '';
+          } else {
+            current += char;
+          }
+        }
+        result.push(current.trim());
+        return result;
+      };
+
+      const updatedMatches = [...matches];
+      let updatedCount = 0;
+      
+      for (const line of lines) {
+        if (!line.trim()) continue;
+        const parts = parseCSVLine(line);
+        if (parts.length < 8) continue;
+        
+        const mIdStr = parts[1];
+        if (!mIdStr || isNaN(Number(mIdStr))) continue;
+        const mId = parseInt(mIdStr);
+        
+        const homeScoreStr = parts[5];
+        const awayScoreStr = parts[6];
+        
+        const homeScore = (homeScoreStr !== "" && !isNaN(Number(homeScoreStr))) ? parseInt(homeScoreStr) : null;
+        const awayScore = (awayScoreStr !== "" && !isNaN(Number(awayScoreStr))) ? parseInt(awayScoreStr) : null;
+        
+        // Find match
+        const matchIdx = updatedMatches.findIndex(m => m.id === mId);
+        if (matchIdx !== -1) {
+          const match = updatedMatches[matchIdx];
+          if (match.homeScore !== homeScore || match.awayScore !== awayScore) {
+            updatedMatches[matchIdx] = {
+              ...match,
+              homeScore,
+              awayScore
+            };
+            updatedCount++;
+            
+            // Sync to Firebase if online
+            if (isOnlineMode && db) {
+              await setDoc(doc(db, 'matches', String(mId)), updatedMatches[matchIdx]);
+            }
+          }
+        }
+      }
+      
+      if (updatedCount > 0) {
+        setMatches(updatedMatches);
+        if (!isOnlineMode) {
+          localStorage.setItem('wc26_matches', JSON.stringify(updatedMatches));
+        }
+        showToast(`Đồng bộ thành công! Cập nhật tỉ số cho ${updatedCount} trận đấu.`, "success");
+      } else {
+        showToast("Tỉ số trên Web đã đồng bộ khớp hoàn toàn với Google Sheet!", "success");
+      }
+    } catch (error) {
+      console.error(error);
+      showToast("Lỗi đồng bộ Google Sheet. Hãy kiểm tra kết nối mạng hoặc quyền chia sẻ của sheet!", "error");
+    } finally {
+      setIsSyncing(false);
+    }
+  };
+
   // 7. Add expense log
   const handleAddExpense = async (e) => {
     e.preventDefault();
@@ -950,13 +1037,24 @@ function App() {
                     </button>
                   </form>
                 ) : (
-                  <button 
-                    className="admin-toggle-btn active"
-                    onClick={() => { setIsAdmin(!isAdmin); showToast(isAdmin ? "Tắt chế độ chỉnh sửa tỉ số" : "Đã bật chế độ chỉnh sửa tỉ số", "info"); }}
-                  >
-                    {isAdmin ? <Lock size={14} /> : <Unlock size={14} />}
-                    {isAdmin ? "Khóa Tỉ Số" : "Nhập Tỉ Số"}
-                  </button>
+                  <div style={{ display: 'flex', gap: '0.5rem' }}>
+                    <button 
+                      onClick={syncWithGoogleSheet}
+                      className="admin-toggle-btn"
+                      disabled={isSyncing}
+                      style={{ background: 'rgba(16, 185, 129, 0.1)', color: 'var(--color-success)', borderColor: 'rgba(16, 185, 129, 0.2)' }}
+                    >
+                      <RefreshCw size={14} className={isSyncing ? "animate-spin" : ""} style={{ animation: isSyncing ? 'spin 1s linear infinite' : 'none', display: 'inline' }} />
+                      Đồng bộ Google Sheet
+                    </button>
+                    <button 
+                      className="admin-toggle-btn active"
+                      onClick={() => { setIsAdmin(!isAdmin); showToast(isAdmin ? "Tắt chế độ chỉnh sửa tỉ số" : "Đã bật chế độ chỉnh sửa tỉ số", "info"); }}
+                    >
+                      {isAdmin ? <Lock size={14} /> : <Unlock size={14} />}
+                      {isAdmin ? "Khóa Tỉ Số" : "Nhập Tỉ Số"}
+                    </button>
+                  </div>
                 )}
               </div>
             </div>
