@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { 
   Trophy, 
   Users, 
@@ -630,6 +630,23 @@ function App() {
         if (matchIdx !== -1) {
           const match = updatedMatches[matchIdx];
           
+          // Smart merge predictions: Google Sheet predictions overwrite App predictions,
+          // but if Google Sheet is empty and App has a prediction, we keep the App's prediction.
+          const mergedPredictions = { ...match.predictions };
+          Object.keys(playerColMap).forEach(colIdx => {
+            const pName = playerColMap[colIdx];
+            const sheetPred = matchPredictions[pName];
+            const appPred = match.predictions[pName];
+            
+            if (sheetPred && sheetPred.homeScore !== null && sheetPred.awayScore !== null) {
+              mergedPredictions[pName] = sheetPred;
+            } else if (appPred && appPred.homeScore !== null && appPred.awayScore !== null) {
+              // Keep appPred, do not overwrite with null
+            } else {
+              mergedPredictions[pName] = { homeScore: null, awayScore: null };
+            }
+          });
+
           // Check if actual score or predictions changed
           let isChanged = false;
           if (match.homeScore !== homeScore || match.awayScore !== awayScore) {
@@ -637,8 +654,8 @@ function App() {
           } else {
             for (const pName of Object.values(playerColMap)) {
               const prevP = match.predictions[pName];
-              const newP = matchPredictions[pName];
-              if (!prevP || prevP.homeScore !== newP.homeScore || prevP.awayScore !== newP.awayScore) {
+              const newP = mergedPredictions[pName];
+              if (!prevP || !newP || prevP.homeScore !== newP.homeScore || prevP.awayScore !== newP.awayScore) {
                 isChanged = true;
                 break;
               }
@@ -646,11 +663,6 @@ function App() {
           }
           
           if (isChanged) {
-            const mergedPredictions = {
-              ...match.predictions,
-              ...matchPredictions
-            };
-            
             updatedMatches[matchIdx] = {
               ...match,
               homeScore,
@@ -690,7 +702,10 @@ function App() {
     }
   };
 
-  // 6c. Automatic background sync from Google Sheet (Runs every 10 mins or on fresh loads)
+  // 6c. Automatic background sync refs & effect (Runs every 10 mins & triggers at next kickoff)
+  const nextMatchTimerRef = useRef(null);
+  const autoSyncIntervalRef = useRef(null);
+
   useEffect(() => {
     const triggerAutoSync = async () => {
       if (matches.length === 0) return;
@@ -738,13 +753,62 @@ function App() {
       }
     };
 
-    // Delay auto-sync slightly after mount
+    // Kickoff-based scheduler to run sync at exact start of next match
+    const scheduleNextMatchSync = () => {
+      if (matches.length === 0) return;
+
+      if (nextMatchTimerRef.current) {
+        clearTimeout(nextMatchTimerRef.current);
+        nextMatchTimerRef.current = null;
+      }
+
+      const now = new Date();
+      // Find matches starting in the future
+      const futureMatches = matches
+        .map(m => ({ id: m.id, time: new Date(m.datetime) }))
+        .filter(m => m.time > now)
+        .sort((a, b) => a.time - b.time);
+
+      if (futureMatches.length > 0) {
+        const nextMatch = futureMatches[0];
+        const delay = nextMatch.time.getTime() - now.getTime();
+        console.log(`Scheduling auto-sync for Match #${nextMatch.id} at ${nextMatch.time.toISOString()} (in ${Math.round(delay/1000)} seconds)`);
+
+        nextMatchTimerRef.current = setTimeout(async () => {
+          console.log(`Match #${nextMatch.id} kicked off! Running automatic kickoff sync...`);
+          localStorage.setItem('wc26_last_sync_time', new Date().toISOString());
+          await syncWithGoogleSheet(true);
+          // Reschedule for the subsequent match
+          scheduleNextMatchSync();
+        }, delay);
+      }
+    };
+
+    // Delay auto-sync check slightly after mount
     const timer = setTimeout(() => {
       triggerAutoSync();
+      scheduleNextMatchSync();
     }, 4000);
 
-    return () => clearTimeout(timer);
-  }, [matches, isOnlineMode]);
+    // Set up periodic interval check (every 10 minutes)
+    if (!autoSyncIntervalRef.current) {
+      autoSyncIntervalRef.current = setInterval(() => {
+        console.log("Periodic 10-minute background sync check...");
+        triggerAutoSync();
+      }, 10 * 60 * 1000);
+    }
+
+    return () => {
+      clearTimeout(timer);
+      if (nextMatchTimerRef.current) {
+        clearTimeout(nextMatchTimerRef.current);
+      }
+      if (autoSyncIntervalRef.current) {
+        clearInterval(autoSyncIntervalRef.current);
+        autoSyncIntervalRef.current = null;
+      }
+    };
+  }, [matches.length, isOnlineMode]);
 
   // 7. Add expense log
   const handleAddExpense = async (e) => {
