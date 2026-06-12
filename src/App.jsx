@@ -529,10 +529,12 @@ function App() {
     showToast(`Đã cập nhật tỷ số trận đấu #${matchId}`, "success");
   };
 
-  // 6b. Sync actual scores AND player predictions from Google Sheet
-  const syncWithGoogleSheet = async () => {
-    setIsSyncing(true);
-    showToast("Đang đồng bộ tỉ số & dự đoán từ Google Sheet...", "info");
+  // 6b. Sync actual scores AND player predictions from Google Sheet (with silent background sync support)
+  const syncWithGoogleSheet = async (isSilent = false) => {
+    if (!isSilent) {
+      setIsSyncing(true);
+      showToast("Đang đồng bộ tỉ số & dự đoán từ Google Sheet...", "info");
+    }
     const sheetUrl = "https://docs.google.com/spreadsheets/d/14YaeCAFpXI9rYDPNSOQ_lnxkTElaz6Keu6frp6DWgWU/export?format=csv&gid=327062778";
     
     try {
@@ -670,17 +672,79 @@ function App() {
         if (!isOnlineMode) {
           localStorage.setItem('wc26_matches', JSON.stringify(updatedMatches));
         }
-        showToast(`Đồng bộ thành công! Đã cập nhật tỉ số & dự đoán của ${updatedCount} trận.`, "success");
+        
+        // Update metadata synced time in Cloud if online
+        if (isOnlineMode && db) {
+          await setDoc(doc(db, 'config', 'metadata'), { lastSyncedAt: new Date().toISOString() });
+        }
+        
+        if (!isSilent) showToast(`Đồng bộ thành công! Đã cập nhật tỉ số & dự đoán của ${updatedCount} trận.`, "success");
       } else {
-        showToast("Mọi tỉ số và dự đoán đã đồng bộ khớp hoàn toàn với Google Sheet!", "success");
+        if (!isSilent) showToast("Mọi tỉ số và dự đoán đã đồng bộ khớp hoàn toàn với Google Sheet!", "success");
       }
     } catch (error) {
       console.error(error);
-      showToast("Lỗi đồng bộ dữ liệu Google Sheet!", "error");
+      if (!isSilent) showToast("Lỗi đồng bộ dữ liệu Google Sheet!", "error");
     } finally {
-      setIsSyncing(false);
+      if (!isSilent) setIsSyncing(false);
     }
   };
+
+  // 6c. Automatic background sync from Google Sheet (Runs every 10 mins or on fresh loads)
+  useEffect(() => {
+    const triggerAutoSync = async () => {
+      if (matches.length === 0) return;
+      
+      const now = new Date();
+      const localLastSync = localStorage.getItem('wc26_last_sync_time');
+      let shouldSync = false;
+
+      if (!localLastSync) {
+        shouldSync = true;
+      } else {
+        const lastSyncDate = new Date(localLastSync);
+        const diffMinutes = (now - lastSyncDate) / (1000 * 60);
+        if (diffMinutes >= 10) {
+          shouldSync = true;
+        }
+      }
+
+      if (shouldSync) {
+        // If we are online, coordinate with Firestore metadata to avoid duplicate writes
+        if (isOnlineMode && db) {
+          try {
+            const metaDoc = await getDoc(doc(db, 'config', 'metadata'));
+            if (metaDoc.exists()) {
+              const cloudLastSync = metaDoc.data().lastSyncedAt;
+              if (cloudLastSync) {
+                const cloudSyncDate = new Date(cloudLastSync);
+                const diffCloudMinutes = (now - cloudSyncDate) / (1000 * 60);
+                if (diffCloudMinutes < 10) {
+                  // Already synced by someone else recently, just update local timestamp
+                  localStorage.setItem('wc26_last_sync_time', now.toISOString());
+                  return;
+                }
+              }
+            }
+          } catch (e) {
+            console.error("Failed to read metadata for auto-sync:", e);
+          }
+        }
+        
+        // Trigger silent background sync
+        console.log("Triggering silent background sync with Google Sheet...");
+        localStorage.setItem('wc26_last_sync_time', now.toISOString());
+        await syncWithGoogleSheet(true);
+      }
+    };
+
+    // Delay auto-sync slightly after mount
+    const timer = setTimeout(() => {
+      triggerAutoSync();
+    }, 4000);
+
+    return () => clearTimeout(timer);
+  }, [matches, isOnlineMode]);
 
   // 7. Add expense log
   const handleAddExpense = async (e) => {
