@@ -992,24 +992,43 @@ function App() {
 
                       {/* Score interface */}
                       {isAdmin && isAdminLoggedIn ? (
-                        <div className="score-display" style={{ gap: '0.25rem' }}>
-                          <input 
-                            type="number"
-                            min={0}
-                            placeholder="-"
-                            value={match.homeScore === null ? '' : match.homeScore}
-                            onChange={(e) => handleUpdateActualScore(match.id, e.target.value, match.awayScore)}
-                            className="score-input"
-                          />
-                          <span className="score-dash">:</span>
-                          <input 
-                            type="number"
-                            min={0}
-                            placeholder="-"
-                            value={match.awayScore === null ? '' : match.awayScore}
-                            onChange={(e) => handleUpdateActualScore(match.id, match.homeScore, e.target.value)}
-                            className="score-input"
-                          />
+                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.35rem' }}>
+                          <div className="score-display" style={{ gap: '0.25rem' }}>
+                            <input 
+                              type="number"
+                              min={0}
+                              placeholder="-"
+                              value={match.homeScore === null ? '' : match.homeScore}
+                              onChange={(e) => handleUpdateActualScore(match.id, e.target.value, match.awayScore)}
+                              className="score-input"
+                            />
+                            <span className="score-dash">:</span>
+                            <input 
+                              type="number"
+                              min={0}
+                              placeholder="-"
+                              value={match.awayScore === null ? '' : match.awayScore}
+                              onChange={(e) => handleUpdateActualScore(match.id, match.homeScore, e.target.value)}
+                              className="score-input"
+                            />
+                          </div>
+                          {isPlayed && (
+                            <button 
+                              onClick={() => handleUpdateActualScore(match.id, '', '')}
+                              style={{ 
+                                fontSize: '0.65rem', 
+                                color: 'var(--color-danger)', 
+                                cursor: 'pointer',
+                                background: 'rgba(239, 68, 68, 0.1)',
+                                padding: '0.15rem 0.4rem',
+                                borderRadius: '4px',
+                                border: '1px solid rgba(239, 68, 68, 0.25)',
+                                fontWeight: 700
+                              }}
+                            >
+                              Reset tỉ số
+                            </button>
+                          )}
                         </div>
                       ) : (
                         <div className="score-display">
