@@ -529,10 +529,10 @@ function App() {
     showToast(`Đã cập nhật tỷ số trận đấu #${matchId}`, "success");
   };
 
-  // 6b. Sync actual scores from Google Sheet
+  // 6b. Sync actual scores AND player predictions from Google Sheet
   const syncWithGoogleSheet = async () => {
     setIsSyncing(true);
-    showToast("Đang đồng bộ tỉ số từ Google Sheet...", "info");
+    showToast("Đang đồng bộ tỉ số & dự đoán từ Google Sheet...", "info");
     const sheetUrl = "https://docs.google.com/spreadsheets/d/14YaeCAFpXI9rYDPNSOQ_lnxkTElaz6Keu6frp6DWgWU/export?format=csv&gid=327062778";
     
     try {
@@ -561,6 +561,32 @@ function App() {
         return result;
       };
 
+      // Find player columns from header row (Row 3)
+      let headerLine = null;
+      for (const line of lines) {
+        const parts = parseCSVLine(line);
+        if (parts.includes('A.Hòa') || parts.includes('Ngày giờ thi đấu')) {
+          headerLine = parts;
+          break;
+        }
+      }
+
+      if (!headerLine) {
+        throw new Error("Không tìm thấy tiêu đề trong Google Sheet!");
+      }
+
+      // Map colIndex -> playerName (columns 8 to 60, spaced by 2)
+      const playerColMap = {};
+      for (let c = 8; c <= 60; c += 2) {
+        const name = headerLine[c];
+        if (name) {
+          const matchedPlayer = players.find(p => p.trim() === name.trim());
+          if (matchedPlayer) {
+            playerColMap[c] = matchedPlayer;
+          }
+        }
+      }
+
       const updatedMatches = [...matches];
       let updatedCount = 0;
       
@@ -579,15 +605,55 @@ function App() {
         const homeScore = (homeScoreStr !== "" && !isNaN(Number(homeScoreStr))) ? parseInt(homeScoreStr) : null;
         const awayScore = (awayScoreStr !== "" && !isNaN(Number(awayScoreStr))) ? parseInt(awayScoreStr) : null;
         
+        // Parse predictions
+        const matchPredictions = {};
+        Object.keys(playerColMap).forEach(colIdx => {
+          const c = parseInt(colIdx);
+          const playerName = playerColMap[c];
+          
+          const pHomeStr = parts[c];
+          const pAwayStr = parts[c + 1];
+          
+          const pHome = (pHomeStr !== undefined && pHomeStr !== "" && !isNaN(Number(pHomeStr))) ? parseInt(pHomeStr) : null;
+          const pAway = (pAwayStr !== undefined && pAwayStr !== "" && !isNaN(Number(pAwayStr))) ? parseInt(pAwayStr) : null;
+          
+          matchPredictions[playerName] = {
+            homeScore: pHome,
+            awayScore: pAway
+          };
+        });
+
         // Find match
         const matchIdx = updatedMatches.findIndex(m => m.id === mId);
         if (matchIdx !== -1) {
           const match = updatedMatches[matchIdx];
+          
+          // Check if actual score or predictions changed
+          let isChanged = false;
           if (match.homeScore !== homeScore || match.awayScore !== awayScore) {
+            isChanged = true;
+          } else {
+            for (const pName of Object.values(playerColMap)) {
+              const prevP = match.predictions[pName];
+              const newP = matchPredictions[pName];
+              if (!prevP || prevP.homeScore !== newP.homeScore || prevP.awayScore !== newP.awayScore) {
+                isChanged = true;
+                break;
+              }
+            }
+          }
+          
+          if (isChanged) {
+            const mergedPredictions = {
+              ...match.predictions,
+              ...matchPredictions
+            };
+            
             updatedMatches[matchIdx] = {
               ...match,
               homeScore,
-              awayScore
+              awayScore,
+              predictions: mergedPredictions
             };
             updatedCount++;
             
@@ -604,13 +670,13 @@ function App() {
         if (!isOnlineMode) {
           localStorage.setItem('wc26_matches', JSON.stringify(updatedMatches));
         }
-        showToast(`Đồng bộ thành công! Cập nhật tỉ số cho ${updatedCount} trận đấu.`, "success");
+        showToast(`Đồng bộ thành công! Đã cập nhật tỉ số & dự đoán của ${updatedCount} trận.`, "success");
       } else {
-        showToast("Tỉ số trên Web đã đồng bộ khớp hoàn toàn với Google Sheet!", "success");
+        showToast("Mọi tỉ số và dự đoán đã đồng bộ khớp hoàn toàn với Google Sheet!", "success");
       }
     } catch (error) {
       console.error(error);
-      showToast("Lỗi đồng bộ Google Sheet. Hãy kiểm tra kết nối mạng hoặc quyền chia sẻ của sheet!", "error");
+      showToast("Lỗi đồng bộ dữ liệu Google Sheet!", "error");
     } finally {
       setIsSyncing(false);
     }
