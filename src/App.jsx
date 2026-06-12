@@ -315,8 +315,8 @@ function App() {
       };
     });
 
-    // Sort players by totalFine ascending (least fine wins!)
-    stats.sort((a, b) => a.totalFine - b.totalFine || b.correctScores - a.correctScores);
+    // Sort players by totalFine descending (most fine/donations first!)
+    stats.sort((a, b) => b.totalFine - a.totalFine || a.correctScores - b.correctScores);
     return stats;
   }, [players, matches, rules]);
 
