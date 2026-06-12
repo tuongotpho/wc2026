@@ -55,7 +55,7 @@ function App() {
 
   const [isAdmin, setIsAdmin] = useState(false);
   const [adminPassword, setAdminPassword] = useState('');
-  const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false);
+  const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(localStorage.getItem('wc26_admin_logged') === 'true');
 
   // Filters for Match Center
   const [selectedStage, setSelectedStage] = useState('all');
@@ -456,11 +456,19 @@ function App() {
     e.preventDefault();
     if (adminPassword === 'KTAT2026') {
       setIsAdminLoggedIn(true);
+      localStorage.setItem('wc26_admin_logged', 'true');
       showToast("Đăng nhập quyền Admin thành công!", "success");
       setAdminPassword('');
     } else {
       showToast("Mật khẩu Admin sai!", "error");
     }
+  };
+
+  const handleAdminLogout = () => {
+    setIsAdminLoggedIn(false);
+    setIsAdmin(false);
+    localStorage.removeItem('wc26_admin_logged');
+    showToast("Đã đăng xuất quyền Admin", "info");
   };
 
   // 5. Update match prediction from player
@@ -577,16 +585,101 @@ function App() {
         throw new Error("Không tìm thấy tiêu đề trong Google Sheet!");
       }
 
-      // Map colIndex -> playerName (columns 8 to 60, spaced by 2)
-      const playerColMap = {};
-      for (let c = 8; c <= 60; c += 2) {
+      // Read players list from Google Sheet (even columns starting from 8, stop when empty)
+      const sheetPlayers = [];
+      for (let c = 8; ; c += 2) {
         const name = headerLine[c];
-        if (name) {
-          const matchedPlayer = players.find(p => p.trim() === name.trim());
-          if (matchedPlayer) {
-            playerColMap[c] = matchedPlayer;
-          }
+        if (!name || name.trim() === '') {
+          break;
         }
+        sheetPlayers.push(name.trim());
+      }
+
+      // Detect renames and additions
+      const renamedMap = {}; // oldName -> newName
+      const addedPlayers = [];
+      for (let i = 0; i < sheetPlayers.length; i++) {
+        const sheetName = sheetPlayers[i];
+        if (i < players.length) {
+          const currentName = players[i];
+          if (currentName !== sheetName) {
+            renamedMap[currentName] = sheetName;
+          }
+        } else {
+          addedPlayers.push(sheetName);
+        }
+      }
+
+      const hasNameChanges = Object.keys(renamedMap).length > 0 || addedPlayers.length > 0;
+      let nextPlayers = [...players];
+      let nextPinsMap = { ...pinsMap };
+      let nextChampionBets = { ...championBets };
+      let nextFinalistBets = { ...finalistBets };
+
+      if (hasNameChanges) {
+        nextPlayers = [...sheetPlayers];
+        
+        // Update pins
+        Object.keys(renamedMap).forEach(oldName => {
+          const newName = renamedMap[oldName];
+          if (nextPinsMap[oldName] !== undefined) {
+            nextPinsMap[newName] = nextPinsMap[oldName];
+            delete nextPinsMap[oldName];
+          }
+        });
+
+        // Update bets
+        Object.keys(renamedMap).forEach(oldName => {
+          const newName = renamedMap[oldName];
+          if (nextChampionBets[oldName] !== undefined) {
+            nextChampionBets[newName] = nextChampionBets[oldName];
+            delete nextChampionBets[oldName];
+          }
+          if (nextFinalistBets[oldName] !== undefined) {
+            nextFinalistBets[newName] = nextFinalistBets[oldName];
+            delete nextFinalistBets[oldName];
+          }
+        });
+
+        // Update currentUser session
+        let nextCurrentUser = currentUser;
+        Object.keys(renamedMap).forEach(oldName => {
+          const newName = renamedMap[oldName];
+          if (currentUser === oldName) {
+            nextCurrentUser = newName;
+          }
+        });
+
+        // Set states immediately so following code uses the correct values
+        setPlayers(nextPlayers);
+        setPinsMap(nextPinsMap);
+        setChampionBets(nextChampionBets);
+        setFinalistBets(nextFinalistBets);
+        if (nextCurrentUser !== currentUser) {
+          setCurrentUser(nextCurrentUser);
+          localStorage.setItem('wc26_logged_user', nextCurrentUser);
+        }
+
+        // Save player lists & metadata to Firestore / LocalStorage
+        if (isOnlineMode && db) {
+          await setDoc(doc(db, 'config', 'players_list'), { names: nextPlayers });
+          await setDoc(doc(db, 'config', 'pins'), { pins: nextPinsMap });
+          await setDoc(doc(db, 'config', 'bets'), {
+            championBets: nextChampionBets,
+            finalistBets: nextFinalistBets
+          });
+        } else {
+          localStorage.setItem('wc26_players', JSON.stringify(nextPlayers));
+          localStorage.setItem('wc26_pins', JSON.stringify(nextPinsMap));
+          localStorage.setItem('wc26_champion_bets', JSON.stringify(nextChampionBets));
+          localStorage.setItem('wc26_finalist_bets', JSON.stringify(nextFinalistBets));
+        }
+      }
+
+      // Map colIndex -> playerName (using new players list)
+      const playerColMap = {};
+      for (let c = 8; c < 8 + sheetPlayers.length * 2; c += 2) {
+        playerColMap[c] = sheetPlayers[(c - 8) / 2];
       }
 
       const updatedMatches = [...matches];
@@ -632,11 +725,23 @@ function App() {
           
           // Smart merge predictions: Google Sheet predictions overwrite App predictions,
           // but if Google Sheet is empty and App has a prediction, we keep the App's prediction.
-          const mergedPredictions = { ...match.predictions };
+          // First, rename the keys of existing predictions according to the renamed Map, or initialize added players.
+          const renamedPredictions = {};
+          Object.keys(match.predictions).forEach(pName => {
+            const newName = renamedMap[pName] || pName;
+            renamedPredictions[newName] = match.predictions[pName];
+          });
+          addedPlayers.forEach(addedName => {
+            if (renamedPredictions[addedName] === undefined) {
+              renamedPredictions[addedName] = { homeScore: null, awayScore: null };
+            }
+          });
+
+          const mergedPredictions = { ...renamedPredictions };
           Object.keys(playerColMap).forEach(colIdx => {
             const pName = playerColMap[colIdx];
             const sheetPred = matchPredictions[pName];
-            const appPred = match.predictions[pName];
+            const appPred = renamedPredictions[pName];
             
             if (sheetPred && sheetPred.homeScore !== null && sheetPred.awayScore !== null) {
               mergedPredictions[pName] = sheetPred;
@@ -651,6 +756,8 @@ function App() {
           let isChanged = false;
           if (match.homeScore !== homeScore || match.awayScore !== awayScore) {
             isChanged = true;
+          } else if (hasNameChanges) {
+            isChanged = true; // Always save matches if name changes occurred to update keys
           } else {
             for (const pName of Object.values(playerColMap)) {
               const prevP = match.predictions[pName];
@@ -1231,7 +1338,7 @@ function App() {
                     </button>
                   </form>
                 ) : (
-                  <div style={{ display: 'flex', gap: '0.5rem' }}>
+                  <div style={{ display: 'flex', gap: '0.35rem', flexWrap: 'wrap' }}>
                     <button 
                       onClick={syncWithGoogleSheet}
                       className="admin-toggle-btn"
@@ -1239,14 +1346,21 @@ function App() {
                       style={{ background: 'rgba(16, 185, 129, 0.1)', color: 'var(--color-success)', borderColor: 'rgba(16, 185, 129, 0.2)' }}
                     >
                       <RefreshCw size={14} className={isSyncing ? "animate-spin" : ""} style={{ animation: isSyncing ? 'spin 1s linear infinite' : 'none', display: 'inline' }} />
-                      Đồng bộ Google Sheet
+                      Đồng bộ
                     </button>
                     <button 
                       className="admin-toggle-btn active"
                       onClick={() => { setIsAdmin(!isAdmin); showToast(isAdmin ? "Tắt chế độ chỉnh sửa tỉ số" : "Đã bật chế độ chỉnh sửa tỉ số", "info"); }}
                     >
                       {isAdmin ? <Lock size={14} /> : <Unlock size={14} />}
-                      {isAdmin ? "Khóa Tỉ Số" : "Nhập Tỉ Số"}
+                      {isAdmin ? "Khóa" : "Sửa"}
+                    </button>
+                    <button 
+                      onClick={handleAdminLogout}
+                      className="admin-toggle-btn"
+                      style={{ background: 'rgba(239, 68, 68, 0.1)', color: 'var(--color-danger)', borderColor: 'rgba(239, 68, 68, 0.2)' }}
+                    >
+                      Đăng xuất
                     </button>
                   </div>
                 )}
@@ -1674,7 +1788,45 @@ function App() {
               </div>
 
               {/* DB Backups & Admin Credentials */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+                {/* Admin Access Card */}
+                <div style={{ padding: '1rem', borderRadius: '12px', background: 'rgba(255, 255, 255, 0.02)', border: '1px solid var(--border-color)' }}>
+                  <h4 style={{ fontSize: '1rem', fontWeight: 700, marginBottom: '0.75rem', color: 'var(--color-gold)' }}>Quyền Admin</h4>
+                  {isAdminLoggedIn ? (
+                    <div>
+                      <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginBottom: '0.75rem' }}>
+                        Đang đăng nhập quyền Admin. Bạn có quyền cập nhật tỉ số thực tế, chỉnh sửa luật và cấu hình.
+                      </p>
+                      <button 
+                        onClick={handleAdminLogout} 
+                        className="primary-btn" 
+                        style={{ background: 'var(--color-danger)', color: '#fff', fontSize: '0.85rem', width: '100%' }}
+                      >
+                        Đăng xuất Admin
+                      </button>
+                    </div>
+                  ) : (
+                    <div>
+                      <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginBottom: '0.75rem' }}>
+                        Nhập mật khẩu để đăng nhập quyền Admin.
+                      </p>
+                      <form onSubmit={handleAdminLogin} style={{ display: 'flex', gap: '0.35rem' }}>
+                        <input 
+                          type="password"
+                          placeholder="Mật khẩu Admin"
+                          value={adminPassword}
+                          onChange={(e) => setAdminPassword(e.target.value)}
+                          className="text-input"
+                          style={{ padding: '0.4rem 0.8rem', fontSize: '0.85rem', flex: 1 }}
+                        />
+                        <button type="submit" className="primary-btn" style={{ background: 'var(--color-danger)', color: '#fff', fontSize: '0.85rem', padding: '0.4rem 0.8rem' }}>
+                          Admin
+                        </button>
+                      </form>
+                    </div>
+                  )}
+                </div>
+
                 <div>
                   <h4 style={{ fontSize: '1rem', fontWeight: 700, marginBottom: '1rem', color: 'var(--color-gold)' }}>Backup & Restore Dữ Liệu</h4>
                   <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginBottom: '1rem' }}>

@@ -12,7 +12,7 @@
     "LM.Chủ",
     "Thành",
     "Cường",
-    "A Sơn",
+    "Ch Loan",
     "A.Hiệu",
     "Long",
     "A. Tuấn",
@@ -26,7 +26,8 @@
     "Đức Anh",
     "Thắng",
     "a. Dương",
-    "E Sơn"
+    "E Sơn",
+    "E Đức"
   ],
   "matches": [
     {
@@ -85,7 +86,7 @@
           "homeScore": 2,
           "awayScore": 0
         },
-        "A Sơn": {
+        "Ch Loan": {
           "homeScore": null,
           "awayScore": null
         },
@@ -144,6 +145,10 @@
         "E Sơn": {
           "homeScore": 2,
           "awayScore": 0
+        },
+        "E Đức": {
+          "homeScore": null,
+          "awayScore": null
         }
       },
       "stage": "vong_bang"
@@ -204,7 +209,7 @@
           "homeScore": 1,
           "awayScore": 2
         },
-        "A Sơn": {
+        "Ch Loan": {
           "homeScore": null,
           "awayScore": null
         },
@@ -263,6 +268,10 @@
         "E Sơn": {
           "homeScore": 1,
           "awayScore": 1
+        },
+        "E Đức": {
+          "homeScore": null,
+          "awayScore": null
         }
       },
       "stage": "vong_bang"
@@ -323,7 +332,7 @@
           "homeScore": 1,
           "awayScore": 1
         },
-        "A Sơn": {
+        "Ch Loan": {
           "homeScore": null,
           "awayScore": null
         },
@@ -382,6 +391,10 @@
         "E Sơn": {
           "homeScore": 2,
           "awayScore": 1
+        },
+        "E Đức": {
+          "homeScore": null,
+          "awayScore": null
         }
       },
       "stage": "vong_bang"
@@ -442,7 +455,7 @@
           "homeScore": 1,
           "awayScore": 1
         },
-        "A Sơn": {
+        "Ch Loan": {
           "homeScore": null,
           "awayScore": null
         },
@@ -501,6 +514,10 @@
         "E Sơn": {
           "homeScore": 2,
           "awayScore": 0
+        },
+        "E Đức": {
+          "homeScore": null,
+          "awayScore": null
         }
       },
       "stage": "vong_bang"
@@ -561,7 +578,7 @@
           "homeScore": 1,
           "awayScore": 1
         },
-        "A Sơn": {
+        "Ch Loan": {
           "homeScore": null,
           "awayScore": null
         },
@@ -620,6 +637,10 @@
         "E Sơn": {
           "homeScore": 0,
           "awayScore": 2
+        },
+        "E Đức": {
+          "homeScore": null,
+          "awayScore": null
         }
       },
       "stage": "vong_bang"
@@ -680,7 +701,7 @@
           "homeScore": 1,
           "awayScore": 1
         },
-        "A Sơn": {
+        "Ch Loan": {
           "homeScore": null,
           "awayScore": null
         },
@@ -739,6 +760,10 @@
         "E Sơn": {
           "homeScore": 2,
           "awayScore": 0
+        },
+        "E Đức": {
+          "homeScore": null,
+          "awayScore": null
         }
       },
       "stage": "vong_bang"
@@ -799,7 +824,7 @@
           "homeScore": 1,
           "awayScore": 2
         },
-        "A Sơn": {
+        "Ch Loan": {
           "homeScore": null,
           "awayScore": null
         },
@@ -858,6 +883,10 @@
         "E Sơn": {
           "homeScore": 0,
           "awayScore": 2
+        },
+        "E Đức": {
+          "homeScore": null,
+          "awayScore": null
         }
       },
       "stage": "vong_bang"
@@ -918,7 +947,7 @@
           "homeScore": 0,
           "awayScore": 2
         },
-        "A Sơn": {
+        "Ch Loan": {
           "homeScore": null,
           "awayScore": null
         },
@@ -977,6 +1006,10 @@
         "E Sơn": {
           "homeScore": 1,
           "awayScore": 1
+        },
+        "E Đức": {
+          "homeScore": null,
+          "awayScore": null
         }
       },
       "stage": "vong_bang"
@@ -1037,7 +1070,7 @@
           "homeScore": 2,
           "awayScore": 0
         },
-        "A Sơn": {
+        "Ch Loan": {
           "homeScore": null,
           "awayScore": null
         },
@@ -1096,6 +1129,10 @@
         "E Sơn": {
           "homeScore": 4,
           "awayScore": 0
+        },
+        "E Đức": {
+          "homeScore": null,
+          "awayScore": null
         }
       },
       "stage": "vong_bang"
@@ -1156,7 +1193,7 @@
           "homeScore": 2,
           "awayScore": 2
         },
-        "A Sơn": {
+        "Ch Loan": {
           "homeScore": null,
           "awayScore": null
         },
@@ -1215,6 +1252,10 @@
         "E Sơn": {
           "homeScore": 2,
           "awayScore": 1
+        },
+        "E Đức": {
+          "homeScore": null,
+          "awayScore": null
         }
       },
       "stage": "vong_bang"
@@ -1275,7 +1316,7 @@
           "homeScore": 1,
           "awayScore": 2
         },
-        "A Sơn": {
+        "Ch Loan": {
           "homeScore": null,
           "awayScore": null
         },
@@ -1334,6 +1375,10 @@
         "E Sơn": {
           "homeScore": 1,
           "awayScore": 1
+        },
+        "E Đức": {
+          "homeScore": null,
+          "awayScore": null
         }
       },
       "stage": "vong_bang"
@@ -1394,7 +1439,7 @@
           "homeScore": 1,
           "awayScore": 0
         },
-        "A Sơn": {
+        "Ch Loan": {
           "homeScore": null,
           "awayScore": null
         },
@@ -1453,6 +1498,10 @@
         "E Sơn": {
           "homeScore": 1,
           "awayScore": 0
+        },
+        "E Đức": {
+          "homeScore": null,
+          "awayScore": null
         }
       },
       "stage": "vong_bang"
@@ -1513,7 +1562,7 @@
           "homeScore": 3,
           "awayScore": 0
         },
-        "A Sơn": {
+        "Ch Loan": {
           "homeScore": null,
           "awayScore": null
         },
@@ -1572,6 +1621,10 @@
         "E Sơn": {
           "homeScore": 3,
           "awayScore": 0
+        },
+        "E Đức": {
+          "homeScore": null,
+          "awayScore": null
         }
       },
       "stage": "vong_bang"
@@ -1632,7 +1685,7 @@
           "homeScore": 2,
           "awayScore": 1
         },
-        "A Sơn": {
+        "Ch Loan": {
           "homeScore": null,
           "awayScore": null
         },
@@ -1691,6 +1744,10 @@
         "E Sơn": {
           "homeScore": 2,
           "awayScore": 0
+        },
+        "E Đức": {
+          "homeScore": null,
+          "awayScore": null
         }
       },
       "stage": "vong_bang"
@@ -1751,7 +1808,7 @@
           "homeScore": 1,
           "awayScore": 2
         },
-        "A Sơn": {
+        "Ch Loan": {
           "homeScore": null,
           "awayScore": null
         },
@@ -1810,6 +1867,10 @@
         "E Sơn": {
           "homeScore": 0,
           "awayScore": 2
+        },
+        "E Đức": {
+          "homeScore": null,
+          "awayScore": null
         }
       },
       "stage": "vong_bang"
@@ -1870,7 +1931,7 @@
           "homeScore": 1,
           "awayScore": 0
         },
-        "A Sơn": {
+        "Ch Loan": {
           "homeScore": null,
           "awayScore": null
         },
@@ -1929,6 +1990,10 @@
         "E Sơn": {
           "homeScore": 1,
           "awayScore": 0
+        },
+        "E Đức": {
+          "homeScore": null,
+          "awayScore": null
         }
       },
       "stage": "vong_bang"
@@ -1989,7 +2054,7 @@
           "homeScore": 2,
           "awayScore": 1
         },
-        "A Sơn": {
+        "Ch Loan": {
           "homeScore": null,
           "awayScore": null
         },
@@ -2048,6 +2113,10 @@
         "E Sơn": {
           "homeScore": 2,
           "awayScore": 1
+        },
+        "E Đức": {
+          "homeScore": null,
+          "awayScore": null
         }
       },
       "stage": "vong_bang"
@@ -2108,7 +2177,7 @@
           "homeScore": 1,
           "awayScore": 0
         },
-        "A Sơn": {
+        "Ch Loan": {
           "homeScore": null,
           "awayScore": null
         },
@@ -2167,6 +2236,10 @@
         "E Sơn": {
           "homeScore": 0,
           "awayScore": 2
+        },
+        "E Đức": {
+          "homeScore": null,
+          "awayScore": null
         }
       },
       "stage": "vong_bang"
@@ -2227,7 +2300,7 @@
           "homeScore": 1,
           "awayScore": 0
         },
-        "A Sơn": {
+        "Ch Loan": {
           "homeScore": null,
           "awayScore": null
         },
@@ -2286,6 +2359,10 @@
         "E Sơn": {
           "homeScore": 3,
           "awayScore": 0
+        },
+        "E Đức": {
+          "homeScore": null,
+          "awayScore": null
         }
       },
       "stage": "vong_bang"
@@ -2346,7 +2423,7 @@
           "homeScore": null,
           "awayScore": null
         },
-        "A Sơn": {
+        "Ch Loan": {
           "homeScore": null,
           "awayScore": null
         },
@@ -2405,6 +2482,10 @@
         "E Sơn": {
           "homeScore": 1,
           "awayScore": 0
+        },
+        "E Đức": {
+          "homeScore": null,
+          "awayScore": null
         }
       },
       "stage": "vong_bang"
@@ -2465,7 +2546,7 @@
           "homeScore": null,
           "awayScore": null
         },
-        "A Sơn": {
+        "Ch Loan": {
           "homeScore": null,
           "awayScore": null
         },
@@ -2524,6 +2605,10 @@
         "E Sơn": {
           "homeScore": 2,
           "awayScore": 0
+        },
+        "E Đức": {
+          "homeScore": null,
+          "awayScore": null
         }
       },
       "stage": "vong_bang"
@@ -2584,7 +2669,7 @@
           "homeScore": null,
           "awayScore": null
         },
-        "A Sơn": {
+        "Ch Loan": {
           "homeScore": null,
           "awayScore": null
         },
@@ -2643,6 +2728,10 @@
         "E Sơn": {
           "homeScore": 2,
           "awayScore": 1
+        },
+        "E Đức": {
+          "homeScore": null,
+          "awayScore": null
         }
       },
       "stage": "vong_bang"
@@ -2703,7 +2792,7 @@
           "homeScore": null,
           "awayScore": null
         },
-        "A Sơn": {
+        "Ch Loan": {
           "homeScore": null,
           "awayScore": null
         },
@@ -2762,6 +2851,10 @@
         "E Sơn": {
           "homeScore": 1,
           "awayScore": 0
+        },
+        "E Đức": {
+          "homeScore": null,
+          "awayScore": null
         }
       },
       "stage": "vong_bang"
@@ -2822,7 +2915,7 @@
           "homeScore": null,
           "awayScore": null
         },
-        "A Sơn": {
+        "Ch Loan": {
           "homeScore": null,
           "awayScore": null
         },
@@ -2881,6 +2974,10 @@
         "E Sơn": {
           "homeScore": 0,
           "awayScore": 2
+        },
+        "E Đức": {
+          "homeScore": null,
+          "awayScore": null
         }
       },
       "stage": "vong_bang"
@@ -2941,7 +3038,7 @@
           "homeScore": null,
           "awayScore": null
         },
-        "A Sơn": {
+        "Ch Loan": {
           "homeScore": null,
           "awayScore": null
         },
@@ -3000,6 +3097,10 @@
         "E Sơn": {
           "homeScore": 1,
           "awayScore": 0
+        },
+        "E Đức": {
+          "homeScore": null,
+          "awayScore": null
         }
       },
       "stage": "vong_bang"
@@ -3060,7 +3161,7 @@
           "homeScore": null,
           "awayScore": null
         },
-        "A Sơn": {
+        "Ch Loan": {
           "homeScore": null,
           "awayScore": null
         },
@@ -3119,6 +3220,10 @@
         "E Sơn": {
           "homeScore": 2,
           "awayScore": 0
+        },
+        "E Đức": {
+          "homeScore": null,
+          "awayScore": null
         }
       },
       "stage": "vong_bang"
@@ -3179,7 +3284,7 @@
           "homeScore": null,
           "awayScore": null
         },
-        "A Sơn": {
+        "Ch Loan": {
           "homeScore": null,
           "awayScore": null
         },
@@ -3238,6 +3343,10 @@
         "E Sơn": {
           "homeScore": 1,
           "awayScore": 0
+        },
+        "E Đức": {
+          "homeScore": null,
+          "awayScore": null
         }
       },
       "stage": "vong_bang"
@@ -3298,7 +3407,7 @@
           "homeScore": null,
           "awayScore": null
         },
-        "A Sơn": {
+        "Ch Loan": {
           "homeScore": null,
           "awayScore": null
         },
@@ -3357,6 +3466,10 @@
         "E Sơn": {
           "homeScore": 1,
           "awayScore": 1
+        },
+        "E Đức": {
+          "homeScore": null,
+          "awayScore": null
         }
       },
       "stage": "vong_bang"
@@ -3417,7 +3530,7 @@
           "homeScore": null,
           "awayScore": null
         },
-        "A Sơn": {
+        "Ch Loan": {
           "homeScore": null,
           "awayScore": null
         },
@@ -3476,6 +3589,10 @@
         "E Sơn": {
           "homeScore": 2,
           "awayScore": 1
+        },
+        "E Đức": {
+          "homeScore": null,
+          "awayScore": null
         }
       },
       "stage": "vong_bang"
@@ -3536,7 +3653,7 @@
           "homeScore": null,
           "awayScore": null
         },
-        "A Sơn": {
+        "Ch Loan": {
           "homeScore": null,
           "awayScore": null
         },
@@ -3595,6 +3712,10 @@
         "E Sơn": {
           "homeScore": 1,
           "awayScore": 1
+        },
+        "E Đức": {
+          "homeScore": null,
+          "awayScore": null
         }
       },
       "stage": "vong_bang"
@@ -3655,7 +3776,7 @@
           "homeScore": null,
           "awayScore": null
         },
-        "A Sơn": {
+        "Ch Loan": {
           "homeScore": null,
           "awayScore": null
         },
@@ -3714,6 +3835,10 @@
         "E Sơn": {
           "homeScore": 3,
           "awayScore": 0
+        },
+        "E Đức": {
+          "homeScore": null,
+          "awayScore": null
         }
       },
       "stage": "vong_bang"
@@ -3774,7 +3899,7 @@
           "homeScore": null,
           "awayScore": null
         },
-        "A Sơn": {
+        "Ch Loan": {
           "homeScore": null,
           "awayScore": null
         },
@@ -3833,6 +3958,10 @@
         "E Sơn": {
           "homeScore": 2,
           "awayScore": 1
+        },
+        "E Đức": {
+          "homeScore": null,
+          "awayScore": null
         }
       },
       "stage": "vong_bang"
@@ -3893,7 +4022,7 @@
           "homeScore": null,
           "awayScore": null
         },
-        "A Sơn": {
+        "Ch Loan": {
           "homeScore": null,
           "awayScore": null
         },
@@ -3952,6 +4081,10 @@
         "E Sơn": {
           "homeScore": 1,
           "awayScore": 0
+        },
+        "E Đức": {
+          "homeScore": null,
+          "awayScore": null
         }
       },
       "stage": "vong_bang"
@@ -4012,7 +4145,7 @@
           "homeScore": null,
           "awayScore": null
         },
-        "A Sơn": {
+        "Ch Loan": {
           "homeScore": null,
           "awayScore": null
         },
@@ -4071,6 +4204,10 @@
         "E Sơn": {
           "homeScore": 2,
           "awayScore": 0
+        },
+        "E Đức": {
+          "homeScore": null,
+          "awayScore": null
         }
       },
       "stage": "vong_bang"
@@ -4131,7 +4268,7 @@
           "homeScore": null,
           "awayScore": null
         },
-        "A Sơn": {
+        "Ch Loan": {
           "homeScore": null,
           "awayScore": null
         },
@@ -4190,6 +4327,10 @@
         "E Sơn": {
           "homeScore": 2,
           "awayScore": 0
+        },
+        "E Đức": {
+          "homeScore": null,
+          "awayScore": null
         }
       },
       "stage": "vong_bang"
@@ -4250,7 +4391,7 @@
           "homeScore": null,
           "awayScore": null
         },
-        "A Sơn": {
+        "Ch Loan": {
           "homeScore": null,
           "awayScore": null
         },
@@ -4309,6 +4450,10 @@
         "E Sơn": {
           "homeScore": 0,
           "awayScore": 1
+        },
+        "E Đức": {
+          "homeScore": null,
+          "awayScore": null
         }
       },
       "stage": "vong_bang"
@@ -4369,7 +4514,7 @@
           "homeScore": null,
           "awayScore": null
         },
-        "A Sơn": {
+        "Ch Loan": {
           "homeScore": null,
           "awayScore": null
         },
@@ -4428,6 +4573,10 @@
         "E Sơn": {
           "homeScore": 2,
           "awayScore": 0
+        },
+        "E Đức": {
+          "homeScore": null,
+          "awayScore": null
         }
       },
       "stage": "vong_bang"
@@ -4488,7 +4637,7 @@
           "homeScore": null,
           "awayScore": null
         },
-        "A Sơn": {
+        "Ch Loan": {
           "homeScore": null,
           "awayScore": null
         },
@@ -4547,6 +4696,10 @@
         "E Sơn": {
           "homeScore": 1,
           "awayScore": 0
+        },
+        "E Đức": {
+          "homeScore": null,
+          "awayScore": null
         }
       },
       "stage": "vong_bang"
@@ -4607,7 +4760,7 @@
           "homeScore": null,
           "awayScore": null
         },
-        "A Sơn": {
+        "Ch Loan": {
           "homeScore": null,
           "awayScore": null
         },
@@ -4666,6 +4819,10 @@
         "E Sơn": {
           "homeScore": 2,
           "awayScore": 0
+        },
+        "E Đức": {
+          "homeScore": null,
+          "awayScore": null
         }
       },
       "stage": "vong_bang"
@@ -4726,7 +4883,7 @@
           "homeScore": null,
           "awayScore": null
         },
-        "A Sơn": {
+        "Ch Loan": {
           "homeScore": null,
           "awayScore": null
         },
@@ -4785,6 +4942,10 @@
         "E Sơn": {
           "homeScore": 0,
           "awayScore": 1
+        },
+        "E Đức": {
+          "homeScore": null,
+          "awayScore": null
         }
       },
       "stage": "vong_bang"
@@ -4845,7 +5006,7 @@
           "homeScore": null,
           "awayScore": null
         },
-        "A Sơn": {
+        "Ch Loan": {
           "homeScore": null,
           "awayScore": null
         },
@@ -4904,6 +5065,10 @@
         "E Sơn": {
           "homeScore": 2,
           "awayScore": 0
+        },
+        "E Đức": {
+          "homeScore": null,
+          "awayScore": null
         }
       },
       "stage": "vong_bang"
@@ -4964,7 +5129,7 @@
           "homeScore": null,
           "awayScore": null
         },
-        "A Sơn": {
+        "Ch Loan": {
           "homeScore": null,
           "awayScore": null
         },
@@ -5023,6 +5188,10 @@
         "E Sơn": {
           "homeScore": 2,
           "awayScore": 0
+        },
+        "E Đức": {
+          "homeScore": null,
+          "awayScore": null
         }
       },
       "stage": "vong_bang"
@@ -5083,7 +5252,7 @@
           "homeScore": null,
           "awayScore": null
         },
-        "A Sơn": {
+        "Ch Loan": {
           "homeScore": null,
           "awayScore": null
         },
@@ -5142,6 +5311,10 @@
         "E Sơn": {
           "homeScore": 1,
           "awayScore": 1
+        },
+        "E Đức": {
+          "homeScore": null,
+          "awayScore": null
         }
       },
       "stage": "vong_bang"
@@ -5202,7 +5375,7 @@
           "homeScore": null,
           "awayScore": null
         },
-        "A Sơn": {
+        "Ch Loan": {
           "homeScore": null,
           "awayScore": null
         },
@@ -5261,6 +5434,10 @@
         "E Sơn": {
           "homeScore": 0,
           "awayScore": 1
+        },
+        "E Đức": {
+          "homeScore": null,
+          "awayScore": null
         }
       },
       "stage": "vong_bang"
@@ -5321,7 +5498,7 @@
           "homeScore": null,
           "awayScore": null
         },
-        "A Sơn": {
+        "Ch Loan": {
           "homeScore": null,
           "awayScore": null
         },
@@ -5380,6 +5557,10 @@
         "E Sơn": {
           "homeScore": 2,
           "awayScore": 0
+        },
+        "E Đức": {
+          "homeScore": null,
+          "awayScore": null
         }
       },
       "stage": "vong_bang"
@@ -5440,7 +5621,7 @@
           "homeScore": null,
           "awayScore": null
         },
-        "A Sơn": {
+        "Ch Loan": {
           "homeScore": null,
           "awayScore": null
         },
@@ -5499,6 +5680,10 @@
         "E Sơn": {
           "homeScore": 2,
           "awayScore": 0
+        },
+        "E Đức": {
+          "homeScore": null,
+          "awayScore": null
         }
       },
       "stage": "vong_bang"
@@ -5559,7 +5744,7 @@
           "homeScore": null,
           "awayScore": null
         },
-        "A Sơn": {
+        "Ch Loan": {
           "homeScore": null,
           "awayScore": null
         },
@@ -5618,6 +5803,10 @@
         "E Sơn": {
           "homeScore": 0,
           "awayScore": 1
+        },
+        "E Đức": {
+          "homeScore": null,
+          "awayScore": null
         }
       },
       "stage": "vong_bang"
@@ -5678,7 +5867,7 @@
           "homeScore": null,
           "awayScore": null
         },
-        "A Sơn": {
+        "Ch Loan": {
           "homeScore": null,
           "awayScore": null
         },
@@ -5737,6 +5926,10 @@
         "E Sơn": {
           "homeScore": 2,
           "awayScore": 0
+        },
+        "E Đức": {
+          "homeScore": null,
+          "awayScore": null
         }
       },
       "stage": "vong_bang"
@@ -5797,7 +5990,7 @@
           "homeScore": null,
           "awayScore": null
         },
-        "A Sơn": {
+        "Ch Loan": {
           "homeScore": null,
           "awayScore": null
         },
@@ -5856,6 +6049,10 @@
         "E Sơn": {
           "homeScore": 1,
           "awayScore": 0
+        },
+        "E Đức": {
+          "homeScore": null,
+          "awayScore": null
         }
       },
       "stage": "vong_bang"
@@ -5916,7 +6113,7 @@
           "homeScore": null,
           "awayScore": null
         },
-        "A Sơn": {
+        "Ch Loan": {
           "homeScore": null,
           "awayScore": null
         },
@@ -5975,6 +6172,10 @@
         "E Sơn": {
           "homeScore": 1,
           "awayScore": 1
+        },
+        "E Đức": {
+          "homeScore": null,
+          "awayScore": null
         }
       },
       "stage": "vong_bang"
@@ -6035,7 +6236,7 @@
           "homeScore": null,
           "awayScore": null
         },
-        "A Sơn": {
+        "Ch Loan": {
           "homeScore": null,
           "awayScore": null
         },
@@ -6094,6 +6295,10 @@
         "E Sơn": {
           "homeScore": 0,
           "awayScore": 2
+        },
+        "E Đức": {
+          "homeScore": null,
+          "awayScore": null
         }
       },
       "stage": "vong_bang"
@@ -6154,7 +6359,7 @@
           "homeScore": null,
           "awayScore": null
         },
-        "A Sơn": {
+        "Ch Loan": {
           "homeScore": null,
           "awayScore": null
         },
@@ -6213,6 +6418,10 @@
         "E Sơn": {
           "homeScore": 2,
           "awayScore": 0
+        },
+        "E Đức": {
+          "homeScore": null,
+          "awayScore": null
         }
       },
       "stage": "vong_bang"
@@ -6273,7 +6482,7 @@
           "homeScore": null,
           "awayScore": null
         },
-        "A Sơn": {
+        "Ch Loan": {
           "homeScore": null,
           "awayScore": null
         },
@@ -6332,6 +6541,10 @@
         "E Sơn": {
           "homeScore": 1,
           "awayScore": 2
+        },
+        "E Đức": {
+          "homeScore": null,
+          "awayScore": null
         }
       },
       "stage": "vong_bang"
@@ -6392,7 +6605,7 @@
           "homeScore": null,
           "awayScore": null
         },
-        "A Sơn": {
+        "Ch Loan": {
           "homeScore": null,
           "awayScore": null
         },
@@ -6451,6 +6664,10 @@
         "E Sơn": {
           "homeScore": 1,
           "awayScore": 1
+        },
+        "E Đức": {
+          "homeScore": null,
+          "awayScore": null
         }
       },
       "stage": "vong_bang"
@@ -6511,7 +6728,7 @@
           "homeScore": null,
           "awayScore": null
         },
-        "A Sơn": {
+        "Ch Loan": {
           "homeScore": null,
           "awayScore": null
         },
@@ -6570,6 +6787,10 @@
         "E Sơn": {
           "homeScore": 0,
           "awayScore": 2
+        },
+        "E Đức": {
+          "homeScore": null,
+          "awayScore": null
         }
       },
       "stage": "vong_bang"
@@ -6630,7 +6851,7 @@
           "homeScore": null,
           "awayScore": null
         },
-        "A Sơn": {
+        "Ch Loan": {
           "homeScore": null,
           "awayScore": null
         },
@@ -6689,6 +6910,10 @@
         "E Sơn": {
           "homeScore": 1,
           "awayScore": 2
+        },
+        "E Đức": {
+          "homeScore": null,
+          "awayScore": null
         }
       },
       "stage": "vong_bang"
@@ -6749,7 +6974,7 @@
           "homeScore": null,
           "awayScore": null
         },
-        "A Sơn": {
+        "Ch Loan": {
           "homeScore": null,
           "awayScore": null
         },
@@ -6808,6 +7033,10 @@
         "E Sơn": {
           "homeScore": 1,
           "awayScore": 1
+        },
+        "E Đức": {
+          "homeScore": null,
+          "awayScore": null
         }
       },
       "stage": "vong_bang"
@@ -6868,7 +7097,7 @@
           "homeScore": null,
           "awayScore": null
         },
-        "A Sơn": {
+        "Ch Loan": {
           "homeScore": null,
           "awayScore": null
         },
@@ -6927,6 +7156,10 @@
         "E Sơn": {
           "homeScore": 0,
           "awayScore": 2
+        },
+        "E Đức": {
+          "homeScore": null,
+          "awayScore": null
         }
       },
       "stage": "vong_bang"
@@ -6987,7 +7220,7 @@
           "homeScore": null,
           "awayScore": null
         },
-        "A Sơn": {
+        "Ch Loan": {
           "homeScore": null,
           "awayScore": null
         },
@@ -7046,6 +7279,10 @@
         "E Sơn": {
           "homeScore": 1,
           "awayScore": 1
+        },
+        "E Đức": {
+          "homeScore": null,
+          "awayScore": null
         }
       },
       "stage": "vong_bang"
@@ -7106,7 +7343,7 @@
           "homeScore": null,
           "awayScore": null
         },
-        "A Sơn": {
+        "Ch Loan": {
           "homeScore": null,
           "awayScore": null
         },
@@ -7165,6 +7402,10 @@
         "E Sơn": {
           "homeScore": 1,
           "awayScore": 0
+        },
+        "E Đức": {
+          "homeScore": null,
+          "awayScore": null
         }
       },
       "stage": "vong_bang"
@@ -7225,7 +7466,7 @@
           "homeScore": null,
           "awayScore": null
         },
-        "A Sơn": {
+        "Ch Loan": {
           "homeScore": null,
           "awayScore": null
         },
@@ -7284,6 +7525,10 @@
         "E Sơn": {
           "homeScore": 1,
           "awayScore": 2
+        },
+        "E Đức": {
+          "homeScore": null,
+          "awayScore": null
         }
       },
       "stage": "vong_bang"
@@ -7344,7 +7589,7 @@
           "homeScore": null,
           "awayScore": null
         },
-        "A Sơn": {
+        "Ch Loan": {
           "homeScore": null,
           "awayScore": null
         },
@@ -7403,6 +7648,10 @@
         "E Sơn": {
           "homeScore": 1,
           "awayScore": 0
+        },
+        "E Đức": {
+          "homeScore": null,
+          "awayScore": null
         }
       },
       "stage": "vong_bang"
@@ -7463,7 +7712,7 @@
           "homeScore": null,
           "awayScore": null
         },
-        "A Sơn": {
+        "Ch Loan": {
           "homeScore": null,
           "awayScore": null
         },
@@ -7522,6 +7771,10 @@
         "E Sơn": {
           "homeScore": 0,
           "awayScore": 1
+        },
+        "E Đức": {
+          "homeScore": null,
+          "awayScore": null
         }
       },
       "stage": "vong_bang"
@@ -7582,7 +7835,7 @@
           "homeScore": null,
           "awayScore": null
         },
-        "A Sơn": {
+        "Ch Loan": {
           "homeScore": null,
           "awayScore": null
         },
@@ -7641,6 +7894,10 @@
         "E Sơn": {
           "homeScore": 1,
           "awayScore": 1
+        },
+        "E Đức": {
+          "homeScore": null,
+          "awayScore": null
         }
       },
       "stage": "vong_bang"
@@ -7701,7 +7958,7 @@
           "homeScore": null,
           "awayScore": null
         },
-        "A Sơn": {
+        "Ch Loan": {
           "homeScore": null,
           "awayScore": null
         },
@@ -7760,6 +8017,10 @@
         "E Sơn": {
           "homeScore": 1,
           "awayScore": 1
+        },
+        "E Đức": {
+          "homeScore": null,
+          "awayScore": null
         }
       },
       "stage": "vong_bang"
@@ -7820,7 +8081,7 @@
           "homeScore": null,
           "awayScore": null
         },
-        "A Sơn": {
+        "Ch Loan": {
           "homeScore": null,
           "awayScore": null
         },
@@ -7879,6 +8140,10 @@
         "E Sơn": {
           "homeScore": 0,
           "awayScore": 2
+        },
+        "E Đức": {
+          "homeScore": null,
+          "awayScore": null
         }
       },
       "stage": "vong_bang"
@@ -7939,7 +8204,7 @@
           "homeScore": null,
           "awayScore": null
         },
-        "A Sơn": {
+        "Ch Loan": {
           "homeScore": null,
           "awayScore": null
         },
@@ -7998,6 +8263,10 @@
         "E Sơn": {
           "homeScore": 0,
           "awayScore": 2
+        },
+        "E Đức": {
+          "homeScore": null,
+          "awayScore": null
         }
       },
       "stage": "vong_bang"
@@ -8058,7 +8327,7 @@
           "homeScore": null,
           "awayScore": null
         },
-        "A Sơn": {
+        "Ch Loan": {
           "homeScore": null,
           "awayScore": null
         },
@@ -8117,6 +8386,10 @@
         "E Sơn": {
           "homeScore": 1,
           "awayScore": 0
+        },
+        "E Đức": {
+          "homeScore": null,
+          "awayScore": null
         }
       },
       "stage": "vong_bang"
@@ -8177,7 +8450,7 @@
           "homeScore": null,
           "awayScore": null
         },
-        "A Sơn": {
+        "Ch Loan": {
           "homeScore": null,
           "awayScore": null
         },
@@ -8236,6 +8509,10 @@
         "E Sơn": {
           "homeScore": 1,
           "awayScore": 1
+        },
+        "E Đức": {
+          "homeScore": null,
+          "awayScore": null
         }
       },
       "stage": "vong_bang"
@@ -8296,7 +8573,7 @@
           "homeScore": null,
           "awayScore": null
         },
-        "A Sơn": {
+        "Ch Loan": {
           "homeScore": null,
           "awayScore": null
         },
@@ -8355,6 +8632,10 @@
         "E Sơn": {
           "homeScore": 1,
           "awayScore": 1
+        },
+        "E Đức": {
+          "homeScore": null,
+          "awayScore": null
         }
       },
       "stage": "vong_bang"
@@ -8415,7 +8696,7 @@
           "homeScore": null,
           "awayScore": null
         },
-        "A Sơn": {
+        "Ch Loan": {
           "homeScore": null,
           "awayScore": null
         },
@@ -8474,6 +8755,10 @@
         "E Sơn": {
           "homeScore": 1,
           "awayScore": 1
+        },
+        "E Đức": {
+          "homeScore": null,
+          "awayScore": null
         }
       },
       "stage": "vong_bang"
@@ -8534,7 +8819,7 @@
           "homeScore": null,
           "awayScore": null
         },
-        "A Sơn": {
+        "Ch Loan": {
           "homeScore": null,
           "awayScore": null
         },
@@ -8593,6 +8878,10 @@
         "E Sơn": {
           "homeScore": 0,
           "awayScore": 3
+        },
+        "E Đức": {
+          "homeScore": null,
+          "awayScore": null
         }
       },
       "stage": "vong_bang"
@@ -8653,7 +8942,7 @@
           "homeScore": null,
           "awayScore": null
         },
-        "A Sơn": {
+        "Ch Loan": {
           "homeScore": null,
           "awayScore": null
         },
@@ -8712,6 +9001,10 @@
         "E Sơn": {
           "homeScore": 1,
           "awayScore": 1
+        },
+        "E Đức": {
+          "homeScore": null,
+          "awayScore": null
         }
       },
       "stage": "vong_32"
@@ -8772,7 +9065,7 @@
           "homeScore": null,
           "awayScore": null
         },
-        "A Sơn": {
+        "Ch Loan": {
           "homeScore": null,
           "awayScore": null
         },
@@ -8831,6 +9124,10 @@
         "E Sơn": {
           "homeScore": 1,
           "awayScore": 1
+        },
+        "E Đức": {
+          "homeScore": null,
+          "awayScore": null
         }
       },
       "stage": "vong_32"
@@ -8891,7 +9188,7 @@
           "homeScore": null,
           "awayScore": null
         },
-        "A Sơn": {
+        "Ch Loan": {
           "homeScore": null,
           "awayScore": null
         },
@@ -8950,6 +9247,10 @@
         "E Sơn": {
           "homeScore": 1,
           "awayScore": 1
+        },
+        "E Đức": {
+          "homeScore": null,
+          "awayScore": null
         }
       },
       "stage": "vong_32"
@@ -9010,7 +9311,7 @@
           "homeScore": null,
           "awayScore": null
         },
-        "A Sơn": {
+        "Ch Loan": {
           "homeScore": null,
           "awayScore": null
         },
@@ -9069,6 +9370,10 @@
         "E Sơn": {
           "homeScore": 1,
           "awayScore": 1
+        },
+        "E Đức": {
+          "homeScore": null,
+          "awayScore": null
         }
       },
       "stage": "vong_32"
@@ -9129,7 +9434,7 @@
           "homeScore": null,
           "awayScore": null
         },
-        "A Sơn": {
+        "Ch Loan": {
           "homeScore": null,
           "awayScore": null
         },
@@ -9188,6 +9493,10 @@
         "E Sơn": {
           "homeScore": 1,
           "awayScore": 1
+        },
+        "E Đức": {
+          "homeScore": null,
+          "awayScore": null
         }
       },
       "stage": "vong_32"
@@ -9248,7 +9557,7 @@
           "homeScore": null,
           "awayScore": null
         },
-        "A Sơn": {
+        "Ch Loan": {
           "homeScore": null,
           "awayScore": null
         },
@@ -9307,6 +9616,10 @@
         "E Sơn": {
           "homeScore": 1,
           "awayScore": 1
+        },
+        "E Đức": {
+          "homeScore": null,
+          "awayScore": null
         }
       },
       "stage": "vong_32"
@@ -9367,7 +9680,7 @@
           "homeScore": null,
           "awayScore": null
         },
-        "A Sơn": {
+        "Ch Loan": {
           "homeScore": null,
           "awayScore": null
         },
@@ -9426,6 +9739,10 @@
         "E Sơn": {
           "homeScore": 1,
           "awayScore": 1
+        },
+        "E Đức": {
+          "homeScore": null,
+          "awayScore": null
         }
       },
       "stage": "vong_32"
@@ -9486,7 +9803,7 @@
           "homeScore": null,
           "awayScore": null
         },
-        "A Sơn": {
+        "Ch Loan": {
           "homeScore": null,
           "awayScore": null
         },
@@ -9545,6 +9862,10 @@
         "E Sơn": {
           "homeScore": 1,
           "awayScore": 1
+        },
+        "E Đức": {
+          "homeScore": null,
+          "awayScore": null
         }
       },
       "stage": "vong_32"
@@ -9605,7 +9926,7 @@
           "homeScore": null,
           "awayScore": null
         },
-        "A Sơn": {
+        "Ch Loan": {
           "homeScore": null,
           "awayScore": null
         },
@@ -9664,6 +9985,10 @@
         "E Sơn": {
           "homeScore": 1,
           "awayScore": 1
+        },
+        "E Đức": {
+          "homeScore": null,
+          "awayScore": null
         }
       },
       "stage": "vong_32"
@@ -9724,7 +10049,7 @@
           "homeScore": null,
           "awayScore": null
         },
-        "A Sơn": {
+        "Ch Loan": {
           "homeScore": null,
           "awayScore": null
         },
@@ -9783,6 +10108,10 @@
         "E Sơn": {
           "homeScore": 1,
           "awayScore": 1
+        },
+        "E Đức": {
+          "homeScore": null,
+          "awayScore": null
         }
       },
       "stage": "vong_32"
@@ -9843,7 +10172,7 @@
           "homeScore": null,
           "awayScore": null
         },
-        "A Sơn": {
+        "Ch Loan": {
           "homeScore": null,
           "awayScore": null
         },
@@ -9902,6 +10231,10 @@
         "E Sơn": {
           "homeScore": 1,
           "awayScore": 1
+        },
+        "E Đức": {
+          "homeScore": null,
+          "awayScore": null
         }
       },
       "stage": "vong_32"
@@ -9962,7 +10295,7 @@
           "homeScore": null,
           "awayScore": null
         },
-        "A Sơn": {
+        "Ch Loan": {
           "homeScore": null,
           "awayScore": null
         },
@@ -10021,6 +10354,10 @@
         "E Sơn": {
           "homeScore": 1,
           "awayScore": 1
+        },
+        "E Đức": {
+          "homeScore": null,
+          "awayScore": null
         }
       },
       "stage": "vong_32"
@@ -10081,7 +10418,7 @@
           "homeScore": null,
           "awayScore": null
         },
-        "A Sơn": {
+        "Ch Loan": {
           "homeScore": null,
           "awayScore": null
         },
@@ -10140,6 +10477,10 @@
         "E Sơn": {
           "homeScore": 1,
           "awayScore": 1
+        },
+        "E Đức": {
+          "homeScore": null,
+          "awayScore": null
         }
       },
       "stage": "vong_32"
@@ -10200,7 +10541,7 @@
           "homeScore": null,
           "awayScore": null
         },
-        "A Sơn": {
+        "Ch Loan": {
           "homeScore": null,
           "awayScore": null
         },
@@ -10259,6 +10600,10 @@
         "E Sơn": {
           "homeScore": 1,
           "awayScore": 1
+        },
+        "E Đức": {
+          "homeScore": null,
+          "awayScore": null
         }
       },
       "stage": "vong_32"
@@ -10319,7 +10664,7 @@
           "homeScore": null,
           "awayScore": null
         },
-        "A Sơn": {
+        "Ch Loan": {
           "homeScore": null,
           "awayScore": null
         },
@@ -10378,6 +10723,10 @@
         "E Sơn": {
           "homeScore": 1,
           "awayScore": 1
+        },
+        "E Đức": {
+          "homeScore": null,
+          "awayScore": null
         }
       },
       "stage": "vong_32"
@@ -10438,7 +10787,7 @@
           "homeScore": null,
           "awayScore": null
         },
-        "A Sơn": {
+        "Ch Loan": {
           "homeScore": null,
           "awayScore": null
         },
@@ -10497,6 +10846,10 @@
         "E Sơn": {
           "homeScore": 1,
           "awayScore": 1
+        },
+        "E Đức": {
+          "homeScore": null,
+          "awayScore": null
         }
       },
       "stage": "vong_32"
@@ -10557,7 +10910,7 @@
           "homeScore": null,
           "awayScore": null
         },
-        "A Sơn": {
+        "Ch Loan": {
           "homeScore": null,
           "awayScore": null
         },
@@ -10616,6 +10969,10 @@
         "E Sơn": {
           "homeScore": 1,
           "awayScore": 1
+        },
+        "E Đức": {
+          "homeScore": null,
+          "awayScore": null
         }
       },
       "stage": "vong_16"
@@ -10676,7 +11033,7 @@
           "homeScore": null,
           "awayScore": null
         },
-        "A Sơn": {
+        "Ch Loan": {
           "homeScore": null,
           "awayScore": null
         },
@@ -10735,6 +11092,10 @@
         "E Sơn": {
           "homeScore": 1,
           "awayScore": 1
+        },
+        "E Đức": {
+          "homeScore": null,
+          "awayScore": null
         }
       },
       "stage": "vong_16"
@@ -10795,7 +11156,7 @@
           "homeScore": null,
           "awayScore": null
         },
-        "A Sơn": {
+        "Ch Loan": {
           "homeScore": null,
           "awayScore": null
         },
@@ -10854,6 +11215,10 @@
         "E Sơn": {
           "homeScore": 1,
           "awayScore": 1
+        },
+        "E Đức": {
+          "homeScore": null,
+          "awayScore": null
         }
       },
       "stage": "vong_16"
@@ -10914,7 +11279,7 @@
           "homeScore": null,
           "awayScore": null
         },
-        "A Sơn": {
+        "Ch Loan": {
           "homeScore": null,
           "awayScore": null
         },
@@ -10973,6 +11338,10 @@
         "E Sơn": {
           "homeScore": 1,
           "awayScore": 1
+        },
+        "E Đức": {
+          "homeScore": null,
+          "awayScore": null
         }
       },
       "stage": "vong_16"
@@ -11033,7 +11402,7 @@
           "homeScore": null,
           "awayScore": null
         },
-        "A Sơn": {
+        "Ch Loan": {
           "homeScore": null,
           "awayScore": null
         },
@@ -11092,6 +11461,10 @@
         "E Sơn": {
           "homeScore": 1,
           "awayScore": 1
+        },
+        "E Đức": {
+          "homeScore": null,
+          "awayScore": null
         }
       },
       "stage": "vong_16"
@@ -11152,7 +11525,7 @@
           "homeScore": null,
           "awayScore": null
         },
-        "A Sơn": {
+        "Ch Loan": {
           "homeScore": null,
           "awayScore": null
         },
@@ -11211,6 +11584,10 @@
         "E Sơn": {
           "homeScore": 1,
           "awayScore": 1
+        },
+        "E Đức": {
+          "homeScore": null,
+          "awayScore": null
         }
       },
       "stage": "vong_16"
@@ -11271,7 +11648,7 @@
           "homeScore": null,
           "awayScore": null
         },
-        "A Sơn": {
+        "Ch Loan": {
           "homeScore": null,
           "awayScore": null
         },
@@ -11330,6 +11707,10 @@
         "E Sơn": {
           "homeScore": 1,
           "awayScore": 1
+        },
+        "E Đức": {
+          "homeScore": null,
+          "awayScore": null
         }
       },
       "stage": "vong_16"
@@ -11390,7 +11771,7 @@
           "homeScore": null,
           "awayScore": null
         },
-        "A Sơn": {
+        "Ch Loan": {
           "homeScore": null,
           "awayScore": null
         },
@@ -11449,6 +11830,10 @@
         "E Sơn": {
           "homeScore": 1,
           "awayScore": 1
+        },
+        "E Đức": {
+          "homeScore": null,
+          "awayScore": null
         }
       },
       "stage": "vong_16"
@@ -11509,7 +11894,7 @@
           "homeScore": null,
           "awayScore": null
         },
-        "A Sơn": {
+        "Ch Loan": {
           "homeScore": null,
           "awayScore": null
         },
@@ -11568,6 +11953,10 @@
         "E Sơn": {
           "homeScore": 1,
           "awayScore": 1
+        },
+        "E Đức": {
+          "homeScore": null,
+          "awayScore": null
         }
       },
       "stage": "vong_8"
@@ -11628,7 +12017,7 @@
           "homeScore": null,
           "awayScore": null
         },
-        "A Sơn": {
+        "Ch Loan": {
           "homeScore": null,
           "awayScore": null
         },
@@ -11687,6 +12076,10 @@
         "E Sơn": {
           "homeScore": 1,
           "awayScore": 1
+        },
+        "E Đức": {
+          "homeScore": null,
+          "awayScore": null
         }
       },
       "stage": "vong_8"
@@ -11747,7 +12140,7 @@
           "homeScore": null,
           "awayScore": null
         },
-        "A Sơn": {
+        "Ch Loan": {
           "homeScore": null,
           "awayScore": null
         },
@@ -11806,6 +12199,10 @@
         "E Sơn": {
           "homeScore": 1,
           "awayScore": 1
+        },
+        "E Đức": {
+          "homeScore": null,
+          "awayScore": null
         }
       },
       "stage": "vong_8"
@@ -11866,7 +12263,7 @@
           "homeScore": null,
           "awayScore": null
         },
-        "A Sơn": {
+        "Ch Loan": {
           "homeScore": null,
           "awayScore": null
         },
@@ -11925,6 +12322,10 @@
         "E Sơn": {
           "homeScore": 1,
           "awayScore": 1
+        },
+        "E Đức": {
+          "homeScore": null,
+          "awayScore": null
         }
       },
       "stage": "vong_8"
@@ -11985,7 +12386,7 @@
           "homeScore": null,
           "awayScore": null
         },
-        "A Sơn": {
+        "Ch Loan": {
           "homeScore": null,
           "awayScore": null
         },
@@ -12044,6 +12445,10 @@
         "E Sơn": {
           "homeScore": 1,
           "awayScore": 1
+        },
+        "E Đức": {
+          "homeScore": null,
+          "awayScore": null
         }
       },
       "stage": "ban_ket"
@@ -12104,7 +12509,7 @@
           "homeScore": null,
           "awayScore": null
         },
-        "A Sơn": {
+        "Ch Loan": {
           "homeScore": null,
           "awayScore": null
         },
@@ -12163,6 +12568,10 @@
         "E Sơn": {
           "homeScore": 1,
           "awayScore": 1
+        },
+        "E Đức": {
+          "homeScore": null,
+          "awayScore": null
         }
       },
       "stage": "ban_ket"
@@ -12223,7 +12632,7 @@
           "homeScore": null,
           "awayScore": null
         },
-        "A Sơn": {
+        "Ch Loan": {
           "homeScore": null,
           "awayScore": null
         },
@@ -12282,6 +12691,10 @@
         "E Sơn": {
           "homeScore": 1,
           "awayScore": 1
+        },
+        "E Đức": {
+          "homeScore": null,
+          "awayScore": null
         }
       },
       "stage": "chung_ket"
@@ -12342,7 +12755,7 @@
           "homeScore": null,
           "awayScore": null
         },
-        "A Sơn": {
+        "Ch Loan": {
           "homeScore": null,
           "awayScore": null
         },
@@ -12401,6 +12814,10 @@
         "E Sơn": {
           "homeScore": 1,
           "awayScore": 1
+        },
+        "E Đức": {
+          "homeScore": null,
+          "awayScore": null
         }
       },
       "stage": "chung_ket"

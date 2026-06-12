@@ -46,20 +46,20 @@ async function test() {
   }
 
   console.log("=== Matching Players ===");
-  const playerColMap = {};
-  for (let c = 8; c <= 60; c += 2) {
+  const sheetPlayers = [];
+  for (let c = 8; ; c += 2) {
     const name = headerLine[c];
-    if (name) {
-      const matchedPlayer = players.find(p => p.trim() === name.trim());
-      if (matchedPlayer) {
-        playerColMap[c] = matchedPlayer;
-        console.log(`Col ${c} -> ${matchedPlayer} (Excel Name: '${name}')`);
-      } else {
-        console.log(`Col ${c} -> NO MATCH for Excel Name: '${name}'`);
-      }
-    } else {
-      console.log(`Col ${c} -> Empty`);
+    if (!name || name.trim() === '') {
+      break;
     }
+    sheetPlayers.push(name.trim());
+  }
+
+  const playerColMap = {};
+  for (let c = 8; c < 8 + sheetPlayers.length * 2; c += 2) {
+    const name = sheetPlayers[(c - 8) / 2];
+    playerColMap[c] = name;
+    console.log(`Col ${c} -> ${name}`);
   }
 
   console.log(`\nFound ${Object.keys(playerColMap).length} mapped players.`);
