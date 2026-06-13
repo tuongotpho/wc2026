@@ -1260,7 +1260,7 @@ function App() {
                           <td>
                             <div className="player-name-cell">
                               {player.name}
-                              {player.name === "E Sơn" && <span style={{ fontSize: '0.7rem', padding: '0.1rem 0.4rem', borderRadius: '4px', background: 'rgba(245, 158, 11, 0.1)', color: 'var(--color-gold)' }}>🤖 Bot Average</span>}
+                              {player.name === "E Sơn" && <span style={{ fontSize: '0.7rem', padding: '0.1rem 0.4rem', borderRadius: '4px', background: 'rgba(245, 158, 11, 0.1)', color: 'var(--color-gold)' }}>🤖 Iron Man</span>}
                               {isLogged && <span style={{ fontSize: '0.7rem', padding: '0.1rem 0.4rem', borderRadius: '4px', background: 'rgba(16, 185, 129, 0.1)', color: 'var(--color-success)' }}>Bạn</span>}
                             </div>
                           </td>
