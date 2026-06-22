@@ -480,6 +480,189 @@ function App() {
     return history;
   }, [selectedPlayer, players, matches, rules]);
 
+  // Achievements & Badges calculation
+  const playerAchievements = useMemo(() => {
+    if (players.length === 0 || matches.length === 0) return { byPlayer: {}, overview: {} };
+
+    // 1. Initialize stats for each player
+    const stats = {};
+    players.forEach(p => {
+      stats[p] = {
+        name: p,
+        correctScores: 0,
+        correctOutcomes: 0,
+        wrongOutcomes: 0,
+        totalFine: 0,
+        contrarianPoints: 0,
+        currentStreak: 0,
+        maxStreak: 0
+      };
+    });
+
+    // 2. Sort matches by id to calculate streaks chronologically
+    const playedMatches = [...matches]
+      .filter(m => m.homeScore !== null && m.awayScore !== null)
+      .sort((a, b) => a.id - b.id);
+
+    playedMatches.forEach(match => {
+      // Find the majority prediction outcome for this match (Consensus)
+      const predOutcomes = [];
+      const matchPreds = Object.entries(match.predictions || {});
+      
+      matchPreds.forEach(([name, pred]) => {
+        if (pred && pred.homeScore !== null && pred.awayScore !== null) {
+          const diff = Number(pred.homeScore) - Number(pred.awayScore);
+          if (diff > 0) predOutcomes.push('home');
+          else if (diff < 0) predOutcomes.push('away');
+          else predOutcomes.push('draw');
+        }
+      });
+
+      // Find the majority outcome
+      let majorityOutcome = null;
+      if (predOutcomes.length > 0) {
+        const counts = { home: 0, draw: 0, away: 0 };
+        predOutcomes.forEach(o => counts[o]++);
+        let maxCount = -1;
+        Object.entries(counts).forEach(([outcome, count]) => {
+          if (count > maxCount) {
+            maxCount = count;
+            majorityOutcome = outcome;
+          }
+        });
+      }
+
+      // Calculate stats and update for each player
+      players.forEach(p => {
+        const pred = match.predictions[p];
+        const fine = calculateFine(match, pred, rules);
+        const playerStats = stats[p];
+
+        playerStats.totalFine += fine;
+
+        if (fine === 0) {
+          playerStats.correctScores++;
+        } else if (fine === 0.5 * (rules[match.stage] || 10000)) {
+          playerStats.correctOutcomes++;
+        } else {
+          playerStats.wrongOutcomes++;
+        }
+
+        // Check if correct (either score or outcome, i.e. fine < maxFine)
+        const maxFine = rules[match.stage] || 10000;
+        const isCorrectOutcome = fine < maxFine;
+        
+        if (isCorrectOutcome) {
+          playerStats.currentStreak++;
+          if (playerStats.currentStreak > playerStats.maxStreak) {
+            playerStats.maxStreak = playerStats.currentStreak;
+          }
+        } else {
+          playerStats.currentStreak = 0;
+        }
+
+        // Contrarian check: player prediction was different from the group majority
+        if (pred && pred.homeScore !== null && pred.awayScore !== null && majorityOutcome) {
+          const playerDiff = Number(pred.homeScore) - Number(pred.awayScore);
+          let playerOutcome = 'draw';
+          if (playerDiff > 0) playerOutcome = 'home';
+          else if (playerDiff < 0) playerOutcome = 'away';
+
+          if (playerOutcome !== majorityOutcome) {
+            playerStats.contrarianPoints++;
+          }
+        }
+      });
+    });
+
+    // 3. Find the maximum values for each badge
+    const badgeWinners = {
+      vua_ti_so: { players: [], count: 0, emoji: '👑', label: 'Vua Tỉ Số', desc: 'Đoán trúng tỉ số chính xác nhiều nhất' },
+      tien_tri: { players: [], count: 0, emoji: '🔮', label: 'Tiên Tri Vũ Trụ', desc: 'Đoán trúng hướng thắng/thua/hòa nhiều nhất' },
+      sai_bet: { players: [], count: 0, emoji: '🤡', label: 'Kiện Tướng Sai Bét', desc: 'Đoán sai bét nhiều trận nhất' },
+      dai_gia: { players: [], count: 0, emoji: '💰', label: 'Nhà Tài Trợ Vàng', desc: 'Đóng góp tiền phạt nhiều nhất' },
+      co_doc: { players: [], count: 0, emoji: '🐺', label: 'Kẻ Cô Độc', desc: 'Thường xuyên đoán ngược hướng với đa số cả nhóm' },
+      huy_diet: { players: [], count: 0, emoji: '🔥', label: 'Kẻ Hủy Diệt', desc: 'Chuỗi đoán trúng hướng liên tục dài nhất' }
+    };
+
+    // Helper to find max and assign
+    players.forEach(p => {
+      const ps = stats[p];
+      // Vua ti so
+      if (ps.correctScores > badgeWinners.vua_ti_so.count) {
+        badgeWinners.vua_ti_so.count = ps.correctScores;
+        badgeWinners.vua_ti_so.players = [p];
+      } else if (ps.correctScores === badgeWinners.vua_ti_so.count && ps.correctScores > 0) {
+        badgeWinners.vua_ti_so.players.push(p);
+      }
+
+      // Tiên tri
+      if (ps.correctOutcomes > badgeWinners.tien_tri.count) {
+        badgeWinners.tien_tri.count = ps.correctOutcomes;
+        badgeWinners.tien_tri.players = [p];
+      } else if (ps.correctOutcomes === badgeWinners.tien_tri.count && ps.correctOutcomes > 0) {
+        badgeWinners.tien_tri.players.push(p);
+      }
+
+      // Sai bét
+      if (ps.wrongOutcomes > badgeWinners.sai_bet.count) {
+        badgeWinners.sai_bet.count = ps.wrongOutcomes;
+        badgeWinners.sai_bet.players = [p];
+      } else if (ps.wrongOutcomes === badgeWinners.sai_bet.count && ps.wrongOutcomes > 0) {
+        badgeWinners.sai_bet.players.push(p);
+      }
+
+      // Đại gia
+      if (ps.totalFine > badgeWinners.dai_gia.count) {
+        badgeWinners.dai_gia.count = ps.totalFine;
+        badgeWinners.dai_gia.players = [p];
+      } else if (ps.totalFine === badgeWinners.dai_gia.count && ps.totalFine > 0) {
+        badgeWinners.dai_gia.players.push(p);
+      }
+
+      // Cô độc
+      if (ps.contrarianPoints > badgeWinners.co_doc.count) {
+        badgeWinners.co_doc.count = ps.contrarianPoints;
+        badgeWinners.co_doc.players = [p];
+      } else if (ps.contrarianPoints === badgeWinners.co_doc.count && ps.contrarianPoints > 0) {
+        badgeWinners.co_doc.players.push(p);
+      }
+
+      // Hủy diệt
+      if (ps.maxStreak > badgeWinners.huy_diet.count) {
+        badgeWinners.huy_diet.count = ps.maxStreak;
+        badgeWinners.huy_diet.players = [p];
+      } else if (ps.maxStreak === badgeWinners.huy_diet.count && ps.maxStreak > 0) {
+        badgeWinners.huy_diet.players.push(p);
+      }
+    });
+
+    // 4. Map back to easy lookup by player name
+    const playerBadges = {};
+    players.forEach(p => {
+      playerBadges[p] = [];
+    });
+
+    Object.entries(badgeWinners).forEach(([key, info]) => {
+      if (info.count > 0 && info.players.length > 0) {
+        info.players.forEach(p => {
+          playerBadges[p].push({
+            key,
+            emoji: info.emoji,
+            label: info.label,
+            desc: info.desc,
+            count: info.count
+          });
+        });
+      }
+    });
+
+    return {
+      byPlayer: playerBadges,
+      overview: badgeWinners
+    };
+  }, [players, matches, rules]);
+
   // Expenses management computations
   const totalFinesCollected = useMemo(() => {
     return leaderboard.reduce((acc, player) => acc + player.totalFine, 0);
@@ -1351,6 +1534,45 @@ function App() {
               </div>
             )}
 
+            {/* Bảng Vinh Danh & Danh Hiệu Hài Hước */}
+            <div className="glass-panel" style={{ padding: '1.5rem', marginBottom: '1.5rem' }}>
+              <h3 style={{ marginBottom: '1rem', fontSize: '1.1rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                🎖️ Bảng Vinh Danh & Danh Hiệu Hài Hước
+              </h3>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1rem' }}>
+                {Object.entries(playerAchievements.overview || {}).map(([key, info]) => {
+                  if (info.players.length === 0) return null;
+                  return (
+                    <div 
+                      key={key} 
+                      style={{ 
+                        background: 'rgba(255, 255, 255, 0.02)', 
+                        border: '1px solid var(--border-color)', 
+                        borderRadius: '8px', 
+                        padding: '1rem', 
+                        display: 'flex', 
+                        alignItems: 'center', 
+                        gap: '0.75rem'
+                      }}
+                      className="achievement-card"
+                    >
+                      <div style={{ fontSize: '2rem' }}>{info.emoji}</div>
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <div style={{ fontSize: '0.9rem', fontWeight: 700, color: 'var(--color-gold)' }}>{info.label}</div>
+                        <div style={{ fontSize: '0.7rem', color: 'var(--text-secondary)', marginBottom: '0.25rem' }}>{info.desc}</div>
+                        <div style={{ fontSize: '0.85rem', fontWeight: 600, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                          🏆 {info.players.join(', ')} 
+                          <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 'normal', marginLeft: '0.25rem' }}>
+                            ({key === 'dai_gia' ? `${info.count.toLocaleString()}đ` : `${info.count} trận`})
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
             {/* Detailed Leaderboard Table */}
             <div className="glass-panel" style={{ padding: '1.5rem' }}>
               <h3 style={{ marginBottom: '1.25rem', fontSize: '1.1rem', fontWeight: 700 }}>Danh Sách Đóng Phạt Chi Tiết</h3>
@@ -1392,6 +1614,15 @@ function App() {
                               {player.name}
                               {player.name === "E Sơn" && <span style={{ fontSize: '0.7rem', padding: '0.1rem 0.4rem', borderRadius: '4px', background: 'rgba(245, 158, 11, 0.1)', color: 'var(--color-gold)' }}>🤖 Iron Man</span>}
                               {isLogged && <span style={{ fontSize: '0.7rem', padding: '0.1rem 0.4rem', borderRadius: '4px', background: 'rgba(16, 185, 129, 0.1)', color: 'var(--color-success)' }}>Bạn</span>}
+                              {playerAchievements.byPlayer[player.name]?.map(badge => (
+                                <span 
+                                  key={badge.key} 
+                                  title={`${badge.label}: ${badge.desc} (${badge.key === 'dai_gia' ? badge.count.toLocaleString() + 'đ' : badge.count + ' trận'})`}
+                                  style={{ cursor: 'help', fontSize: '0.9rem', marginLeft: '0.15rem' }}
+                                >
+                                  {badge.emoji}
+                                </span>
+                              ))}
                             </div>
                           </td>
                           <td className="fine-amount danger" style={{ color: player.totalFine > 0 ? 'var(--color-danger)' : 'var(--color-success)' }}>
@@ -1711,6 +1942,31 @@ function App() {
                     </div>
                     <h3 style={{ fontSize: '1.25rem', fontWeight: 800 }}>{selectedPlayerStats.name}</h3>
                     <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Thành viên KTAT Pool</p>
+                    {playerAchievements.byPlayer[selectedPlayer]?.length > 0 && (
+                      <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '0.25rem', marginTop: '0.5rem' }}>
+                        {playerAchievements.byPlayer[selectedPlayer].map(badge => (
+                          <span 
+                            key={badge.key}
+                            title={`${badge.label}: ${badge.desc}`}
+                            style={{ 
+                              background: 'rgba(245, 158, 11, 0.1)', 
+                              color: 'var(--color-gold)', 
+                              fontSize: '0.7rem', 
+                              padding: '0.15rem 0.4rem', 
+                              borderRadius: '4px', 
+                              fontWeight: 600,
+                              cursor: 'help',
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: '0.2rem'
+                            }}
+                          >
+                            <span>{badge.emoji}</span>
+                            <span>{badge.label}</span>
+                          </span>
+                        ))}
+                      </div>
+                    )}
                   </div>
 
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', fontSize: '0.9rem' }}>
