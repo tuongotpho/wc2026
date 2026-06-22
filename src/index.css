@@ -856,3 +856,48 @@ button, input, select {
     grid-template-columns: 1fr;
   }
 }
+
+/* Consensus & Chart Visuals */
+.consensus-container {
+  transition: all var(--transition-fast);
+}
+
+.consensus-container:hover {
+  background: rgba(255, 255, 255, 0.03) !important;
+}
+
+.chart-tooltip {
+  position: absolute;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color-hover);
+  border-radius: 6px;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.75rem;
+  color: var(--text-primary);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+  pointer-events: none;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  transform: translate(-50%, -100%);
+  margin-top: -10px;
+}
+
+.chart-tooltip-header {
+  font-weight: 700;
+  color: var(--color-gold);
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 0.2rem;
+  margin-bottom: 0.2rem;
+  white-space: nowrap;
+}
+
+.chart-dot {
+  transition: r 0.15s ease, fill 0.15s ease;
+}
+
+.chart-dot:hover {
+  r: 6px;
+  fill: var(--text-primary);
+}

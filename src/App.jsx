@@ -289,6 +289,9 @@ function App() {
     direction: 'desc'
   });
 
+  // Tooltip state for rank fluctuation chart
+  const [activeChartTooltip, setActiveChartTooltip] = useState(null);
+
   const handleSort = (key) => {
     setLeaderboardSort(prev => {
       if (prev.key === key) {
@@ -424,6 +427,58 @@ function App() {
       finalists: finalistBets[selectedPlayer] || 'Chưa chọn'
     };
   }, [selectedPlayer, matches, rules, championBets, finalistBets]);
+
+  // Rank history over time for selected player
+  const playerRankHistory = useMemo(() => {
+    if (!selectedPlayer || players.length === 0 || matches.length === 0) return [];
+
+    // Filter matches that have been played (chronological order by id)
+    const playedMatches = [...matches]
+      .filter(m => m.homeScore !== null && m.awayScore !== null)
+      .sort((a, b) => a.id - b.id);
+    
+    if (playedMatches.length === 0) return [];
+
+    const runningStats = {};
+    players.forEach(p => {
+      runningStats[p] = { fine: 0, correctScores: 0 };
+    });
+
+    const history = [];
+
+    playedMatches.forEach((match, index) => {
+      // Calculate and accumulate stats for all players
+      players.forEach(p => {
+        const pred = match.predictions[p];
+        const fine = calculateFine(match, pred, rules);
+        runningStats[p].fine += fine;
+        if (fine === 0) {
+          runningStats[p].correctScores += 1;
+        }
+      });
+
+      // Sort players by the exact leaderboard criteria
+      const sortedPlayers = [...players]
+        .map(p => ({
+          name: p,
+          fine: runningStats[p].fine,
+          correctScores: runningStats[p].correctScores
+        }))
+        .sort((a, b) => b.fine - a.fine || b.correctScores - a.correctScores);
+
+      const rank = sortedPlayers.findIndex(p => p.name === selectedPlayer) + 1;
+      
+      history.push({
+        matchNumber: index + 1,
+        matchId: match.id,
+        matchLabel: `Trận ${match.id}: ${match.homeTeam} - ${match.awayTeam}`,
+        rank: rank,
+        fine: runningStats[selectedPlayer].fine
+      });
+    });
+
+    return history;
+  }, [selectedPlayer, players, matches, rules]);
 
   // Expenses management computations
   const totalFinesCollected = useMemo(() => {
@@ -1452,6 +1507,31 @@ function App() {
                 const matchTime = new Date(match.datetime);
                 const isLocked = matchTime <= new Date();
 
+                // Calculate consensus statistics
+                const predictionsList = Object.values(match.predictions || {}).filter(
+                  p => p && p.homeScore !== null && p.awayScore !== null && p.homeScore !== undefined && p.awayScore !== undefined
+                );
+                const totalPreds = predictionsList.length;
+                let homeWinCount = 0;
+                let drawCount = 0;
+                let awayWinCount = 0;
+                let sumHomeScore = 0;
+                let sumAwayScore = 0;
+
+                predictionsList.forEach(p => {
+                  sumHomeScore += Number(p.homeScore);
+                  sumAwayScore += Number(p.awayScore);
+                  if (Number(p.homeScore) > Number(p.awayScore)) homeWinCount++;
+                  else if (Number(p.homeScore) < Number(p.awayScore)) awayWinCount++;
+                  else drawCount++;
+                });
+
+                const homeWinPercent = totalPreds > 0 ? Math.round((homeWinCount / totalPreds) * 100) : 0;
+                const drawPercent = totalPreds > 0 ? Math.round((drawCount / totalPreds) * 100) : 0;
+                const awayWinPercent = totalPreds > 0 ? 100 - homeWinPercent - drawPercent : 0; // Ensure exactly 100% sum
+                const avgHomeScore = totalPreds > 0 ? (sumHomeScore / totalPreds).toFixed(1) : 0;
+                const avgAwayScore = totalPreds > 0 ? (sumAwayScore / totalPreds).toFixed(1) : 0;
+
                 return (
                   <div key={match.id} className="match-card glass-panel">
                     <span className="match-id">#{match.id}</span>
@@ -1523,6 +1603,34 @@ function App() {
                         <span className="team-name">{match.awayTeam || "Chưa xác định"}</span>
                       </div>
                     </div>
+
+                    {/* Consensus display */}
+                    {totalPreds > 0 && (
+                      <div className="consensus-container" style={{ margin: '0.75rem 0', padding: '0.5rem 0.75rem', background: 'rgba(255,255,255,0.015)', borderRadius: '6px', border: '1px dashed var(--border-color)', fontSize: '0.75rem' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--text-secondary)', marginBottom: '0.35rem', fontSize: '0.7rem', fontWeight: 600 }}>
+                          <span>ĐỒNG THUẬN CẢ NHÓM</span>
+                          <span style={{ color: 'var(--color-gold)' }}>Dự kiến TB: {avgHomeScore} - {avgAwayScore}</span>
+                        </div>
+                        {/* Visual Segment Bar */}
+                        <div style={{ height: '6px', borderRadius: '3px', overflow: 'hidden', display: 'flex', background: 'var(--bg-secondary)', marginBottom: '0.25rem' }}>
+                          {homeWinPercent > 0 && (
+                            <div style={{ width: `${homeWinPercent}%`, background: 'var(--color-success)', height: '100%' }} title={`Chủ nhà thắng: ${homeWinPercent}%`} />
+                          )}
+                          {drawPercent > 0 && (
+                            <div style={{ width: `${drawPercent}%`, background: 'var(--color-warning)', height: '100%' }} title={`Hòa: ${drawPercent}%`} />
+                          )}
+                          {awayWinPercent > 0 && (
+                            <div style={{ width: `${awayWinPercent}%`, background: 'var(--color-danger)', height: '100%' }} title={`Khách thắng: ${awayWinPercent}%`} />
+                          )}
+                        </div>
+                        {/* Legend */}
+                        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.7rem', color: 'var(--text-muted)' }}>
+                          <span style={{ color: homeWinPercent > 0 ? 'var(--color-success)' : 'inherit' }}>Chủ: {homeWinPercent}%</span>
+                          <span style={{ color: drawPercent > 0 ? 'var(--color-warning)' : 'inherit' }}>Hòa: {drawPercent}%</span>
+                          <span style={{ color: awayWinPercent > 0 ? 'var(--color-danger)' : 'inherit' }}>Khách: {awayWinPercent}%</span>
+                        </div>
+                      </div>
+                    )}
 
                     {/* Bottom Prediction interface */}
                     <div className="match-prediction-summary">
@@ -1637,11 +1745,158 @@ function App() {
                       <span className="text-secondary" style={{ fontSize: '0.8rem' }}>Dự đoán 2 đội Chung kết:</span>
                       <span style={{ fontWeight: 700 }}>{selectedPlayerStats.finalists}</span>
                     </div>
+
+                    {/* Prediction Outcome Ratio Bar */}
+                    {(() => {
+                      const total = selectedPlayerStats.correctScores + selectedPlayerStats.correctOutcomes + selectedPlayerStats.wrongOutcomes;
+                      if (total === 0) return null;
+                      const csPct = Math.round((selectedPlayerStats.correctScores / total) * 100);
+                      const coPct = Math.round((selectedPlayerStats.correctOutcomes / total) * 100);
+                      const woPct = 100 - csPct - coPct;
+
+                      return (
+                        <div style={{ marginTop: '1.25rem', paddingTop: '1.25rem', borderTop: '1px solid var(--border-color)' }}>
+                          <h4 style={{ fontSize: '0.8rem', fontWeight: 700, marginBottom: '0.5rem', color: 'var(--text-primary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Tỉ Lệ Kết Quả Dự Đoán</h4>
+                          {/* Stacked bar */}
+                          <div style={{ height: '14px', borderRadius: '7px', overflow: 'hidden', display: 'flex', background: 'var(--bg-secondary)', marginBottom: '0.5rem' }}>
+                            {csPct > 0 && (
+                              <div style={{ width: `${csPct}%`, background: 'var(--color-success)', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.6rem', color: '#000', fontWeight: 800 }} title={`Đúng tỉ số: ${csPct}%`}>
+                                {csPct > 12 && `${csPct}%`}
+                              </div>
+                            )}
+                            {coPct > 0 && (
+                              <div style={{ width: `${coPct}%`, background: 'var(--color-warning)', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.6rem', color: '#000', fontWeight: 800 }} title={`Đúng hướng: ${coPct}%`}>
+                                {coPct > 12 && `${coPct}%`}
+                              </div>
+                            )}
+                            {woPct > 0 && (
+                              <div style={{ width: `${woPct}%`, background: 'var(--text-muted)', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.6rem', color: '#fff', fontWeight: 800 }} title={`Sai bét: ${woPct}%`}>
+                                {woPct > 12 && `${woPct}%`}
+                              </div>
+                            )}
+                          </div>
+                          {/* Legend */}
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem', fontSize: '0.75rem' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                                <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--color-success)' }} />
+                                <span style={{ color: 'var(--text-secondary)' }}>Đúng tỉ số:</span>
+                              </div>
+                              <span style={{ fontWeight: 600, color: 'var(--color-success)' }}>{selectedPlayerStats.correctScores} ({csPct}%)</span>
+                            </div>
+                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                                <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--color-warning)' }} />
+                                <span style={{ color: 'var(--text-secondary)' }}>Đúng hướng:</span>
+                              </div>
+                              <span style={{ fontWeight: 600, color: 'var(--color-warning)' }}>{selectedPlayerStats.correctOutcomes} ({coPct}%)</span>
+                            </div>
+                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                                <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--text-muted)' }} />
+                                <span style={{ color: 'var(--text-secondary)' }}>Sai bét:</span>
+                              </div>
+                              <span style={{ fontWeight: 600, color: 'var(--text-secondary)' }}>{selectedPlayerStats.wrongOutcomes} ({woPct}%)</span>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })()}
                   </div>
                 </div>
 
                 {/* Right: History Grid */}
                 <div className="glass-panel" style={{ padding: '1.5rem' }}>
+                  {/* Rank Fluctuation Line Chart */}
+                  {(() => {
+                    if (playerRankHistory.length === 0) return null;
+                    const leftPadding = 30;
+                    const rightPadding = 15;
+                    const topPadding = 15;
+                    const bottomPadding = 20;
+                    const chartWidth = 550 - leftPadding - rightPadding;
+                    const chartHeight = 160 - topPadding - bottomPadding;
+                    const totalPlayers = players.length;
+
+                    const points = playerRankHistory.map((pt, idx) => {
+                      const x = leftPadding + (idx / Math.max(1, playerRankHistory.length - 1)) * chartWidth;
+                      const y = topPadding + ((pt.rank - 1) / Math.max(1, totalPlayers - 1)) * chartHeight;
+                      return { ...pt, x, y };
+                    });
+
+                    return (
+                      <div style={{ position: 'relative', width: '100%', padding: '1rem', background: 'rgba(255,255,255,0.01)', border: '1px solid var(--border-color)', borderRadius: '8px', marginBottom: '1.5rem' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
+                          <h4 style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-primary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Biến Động Thứ Hạng</h4>
+                          <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Hạng 1 ở đỉnh biểu đồ • Hover xem chi tiết</span>
+                        </div>
+                        <div style={{ width: '100%', overflowX: 'auto' }}>
+                          <svg viewBox="0 0 550 160" width="100%" height="160" style={{ display: 'block', overflow: 'visible' }}>
+                            {/* Grid lines */}
+                            {[1, Math.round(totalPlayers / 3), Math.round(2 * totalPlayers / 3), totalPlayers].map((r, i) => {
+                              const yVal = topPadding + ((r - 1) / Math.max(1, totalPlayers - 1)) * chartHeight;
+                              return (
+                                <g key={i}>
+                                  <line x1={leftPadding} y1={yVal} x2={550 - rightPadding} y2={yVal} stroke="rgba(255,255,255,0.06)" strokeDasharray="3,3" />
+                                  <text x={leftPadding - 8} y={yVal + 3} fill="var(--text-muted)" fontSize="9" textAnchor="end">{r}</text>
+                                </g>
+                              );
+                            })}
+                            
+                            {/* Trend Line */}
+                            <path 
+                              d={points.map((pt, idx) => `${idx === 0 ? 'M' : 'L'} ${pt.x} ${pt.y}`).join(' ')} 
+                              fill="none" 
+                              stroke="var(--color-gold)" 
+                              strokeWidth="2.5" 
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            />
+
+                            {/* Dots */}
+                            {points.map((pt, idx) => (
+                              <circle
+                                key={idx}
+                                cx={pt.x}
+                                cy={pt.y}
+                                r={3.5}
+                                fill="var(--bg-secondary)"
+                                stroke="var(--color-gold)"
+                                strokeWidth="2"
+                                className="chart-dot"
+                                onMouseEnter={(e) => {
+                                  const rect = e.target.getBoundingClientRect();
+                                  const parentRect = e.currentTarget.ownerSVGElement.parentElement.parentElement.getBoundingClientRect();
+                                  setActiveChartTooltip({
+                                    x: rect.left - parentRect.left + rect.width / 2,
+                                    y: rect.top - parentRect.top,
+                                    matchLabel: pt.matchLabel,
+                                    rank: pt.rank,
+                                    fine: pt.fine
+                                  });
+                                }}
+                                onMouseLeave={() => setActiveChartTooltip(null)}
+                              />
+                            ))}
+                          </svg>
+                        </div>
+                        {activeChartTooltip && (
+                          <div 
+                            className="chart-tooltip" 
+                            style={{ 
+                              left: `${activeChartTooltip.x}px`, 
+                              top: `${activeChartTooltip.y}px` 
+                            }}
+                          >
+                            <span className="chart-tooltip-header">{activeChartTooltip.matchLabel}</span>
+                            <span>Thứ hạng: <strong style={{ color: 'var(--color-gold)' }}>#{activeChartTooltip.rank}</strong></span>
+                            <span>Phạt lũy kế: <strong>{activeChartTooltip.fine.toLocaleString()}đ</strong></span>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })()}
+
                   <h3 style={{ marginBottom: '1rem', fontSize: '1.1rem', fontWeight: 700 }}>Lịch Sử Dự Đoán & Tiền Phạt</h3>
                   <div className="table-container" style={{ maxHeight: '550px', overflowY: 'auto' }}>
                     <table className="leaderboard-table">
