@@ -279,6 +279,7 @@ function App() {
       if (actualWinnerSign * predWinnerSign > 0) {
         return 0.5 * maxFine; // Correct winner, wrong score -> RIGHT DIRECTION
       }
+      return maxFine; // Wrong winner or predicted draw -> WRONG
     }
   };
 
