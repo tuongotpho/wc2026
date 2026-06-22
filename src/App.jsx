@@ -18,7 +18,10 @@ import {
   Search, 
   Save, 
   Upload, 
-  Download 
+  Download,
+  ArrowUpDown,
+  ArrowUp,
+  ArrowDown
 } from 'lucide-react';
 import initialData from './data.json';
 import { db, isFirebaseConfigured } from './firebase';
@@ -276,8 +279,38 @@ function App() {
       if (actualWinnerSign * predWinnerSign > 0) {
         return 0.5 * maxFine; // Correct winner, wrong score -> RIGHT DIRECTION
       }
-      return maxFine; // Wrong winner or predicted draw -> WRONG
     }
+  };
+
+  // Sort state for leaderboard table
+  const [leaderboardSort, setLeaderboardSort] = useState({
+    key: 'totalFine',
+    direction: 'desc'
+  });
+
+  const handleSort = (key) => {
+    setLeaderboardSort(prev => {
+      if (prev.key === key) {
+        return {
+          key,
+          direction: prev.direction === 'desc' ? 'asc' : 'desc'
+        };
+      }
+      const defaultDirection = (key === 'rank' || key === 'name') ? 'asc' : 'desc';
+      return {
+        key,
+        direction: defaultDirection
+      };
+    });
+  };
+
+  const renderSortIcon = (key) => {
+    if (leaderboardSort.key !== key) {
+      return <ArrowUpDown size={12} style={{ marginLeft: '4px', opacity: 0.4, verticalAlign: 'middle' }} />;
+    }
+    return leaderboardSort.direction === 'asc' 
+      ? <ArrowUp size={12} style={{ marginLeft: '4px', color: 'var(--color-gold)', verticalAlign: 'middle' }} />
+      : <ArrowDown size={12} style={{ marginLeft: '4px', color: 'var(--color-gold)', verticalAlign: 'middle' }} />;
   };
 
   // 3. Aggregate Player statistics
@@ -317,8 +350,37 @@ function App() {
 
     // Sort players by totalFine descending (most fine/donations first!)
     stats.sort((a, b) => b.totalFine - a.totalFine || a.correctScores - b.correctScores);
-    return stats;
+    return stats.map((player, idx) => ({ ...player, originalRank: idx + 1 }));
   }, [players, matches, rules]);
+
+  const sortedLeaderboard = useMemo(() => {
+    const { key, direction } = leaderboardSort;
+    const sorted = [...leaderboard];
+    
+    sorted.sort((a, b) => {
+      let valA, valB;
+      if (key === 'rank') {
+        valA = a.originalRank;
+        valB = b.originalRank;
+      } else {
+        valA = a[key];
+        valB = b[key];
+      }
+      
+      if (valA < valB) return direction === 'asc' ? -1 : 1;
+      if (valA > valB) return direction === 'asc' ? 1 : -1;
+      
+      // Fallback stable sorting
+      if (key !== 'totalFine') {
+        if (a.totalFine !== b.totalFine) {
+          return b.totalFine - a.totalFine; // default to higher fine first
+        }
+      }
+      return a.originalRank - b.originalRank;
+    });
+    
+    return sorted;
+  }, [leaderboard, leaderboardSort]);
 
   // Selected Player details computed info
   const selectedPlayerStats = useMemo(() => {
@@ -1240,22 +1302,34 @@ function App() {
                 <table className="leaderboard-table">
                   <thead>
                     <tr>
-                      <th>Hạng</th>
-                      <th>Người chơi</th>
-                      <th>Tổng tiền phạt</th>
-                      <th>Đúng Tỉ Số (0k)</th>
-                      <th>Đúng Hướng (50%)</th>
-                      <th>Sai Bét</th>
+                      <th className="sortable" onClick={() => handleSort('rank')}>
+                        Hạng {renderSortIcon('rank')}
+                      </th>
+                      <th className="sortable" onClick={() => handleSort('name')}>
+                        Người chơi {renderSortIcon('name')}
+                      </th>
+                      <th className="sortable" onClick={() => handleSort('totalFine')}>
+                        Tổng tiền phạt {renderSortIcon('totalFine')}
+                      </th>
+                      <th className="sortable" onClick={() => handleSort('correctScores')}>
+                        Đúng Tỉ Số (0k) {renderSortIcon('correctScores')}
+                      </th>
+                      <th className="sortable" onClick={() => handleSort('correctOutcomes')}>
+                        Đúng Hướng (50%) {renderSortIcon('correctOutcomes')}
+                      </th>
+                      <th className="sortable" onClick={() => handleSort('wrongOutcomes')}>
+                        Sai Bét {renderSortIcon('wrongOutcomes')}
+                      </th>
                     </tr>
                   </thead>
                   <tbody>
-                    {leaderboard.map((player, idx) => {
+                    {sortedLeaderboard.map((player, idx) => {
                       const isLogged = player.name === currentUser;
                       const matchesPlayed = player.correctScores + player.correctOutcomes + player.wrongOutcomes;
                       return (
                         <tr key={player.name} className={`leaderboard-row ${isLogged ? 'current-user' : ''}`}>
                           <td>
-                            <span className={`rank-badge rank-${idx + 1}`}>{idx + 1}</span>
+                            <span className={`rank-badge rank-${player.originalRank}`}>{player.originalRank}</span>
                           </td>
                           <td>
                             <div className="player-name-cell">

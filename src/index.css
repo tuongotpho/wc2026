@@ -351,6 +351,17 @@ button, input, select {
   text-transform: uppercase;
 }
 
+.leaderboard-table th.sortable {
+  cursor: pointer;
+  user-select: none;
+  transition: color var(--transition-fast), background-color var(--transition-fast);
+}
+
+.leaderboard-table th.sortable:hover {
+  color: var(--text-primary);
+  background-color: rgba(255, 255, 255, 0.03);
+}
+
 .leaderboard-table td {
   padding: 1rem;
   border-bottom: 1px solid var(--border-color);
