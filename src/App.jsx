@@ -995,6 +995,9 @@ function App() {
         if (!mIdStr || isNaN(Number(mIdStr))) continue;
         const mId = parseInt(mIdStr);
         
+        const homeTeam = parts[4] ? parts[4].trim() : '';
+        const awayTeam = parts[7] ? parts[7].trim() : '';
+
         const homeScoreStr = parts[5];
         const awayScoreStr = parts[6];
         
@@ -1053,9 +1056,11 @@ function App() {
             }
           });
 
-          // Check if actual score or predictions changed
+          // Check if actual score, team names, or predictions changed
           let isChanged = false;
           if (match.homeScore !== homeScore || match.awayScore !== awayScore) {
+            isChanged = true;
+          } else if (homeTeam && awayTeam && (match.homeTeam !== homeTeam || match.awayTeam !== awayTeam)) {
             isChanged = true;
           } else if (hasNameChanges) {
             isChanged = true; // Always save matches if name changes occurred to update keys
@@ -1073,6 +1078,8 @@ function App() {
           if (isChanged) {
             updatedMatches[matchIdx] = {
               ...match,
+              homeTeam: homeTeam || match.homeTeam,
+              awayTeam: awayTeam || match.awayTeam,
               homeScore,
               awayScore,
               predictions: mergedPredictions
