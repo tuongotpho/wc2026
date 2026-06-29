@@ -123,6 +123,7 @@ function App() {
             // Sort matches by ID
             loadedMatches.sort((a, b) => a.id - b.id);
             setMatches(loadedMatches);
+            localStorage.setItem('wc26_matches', JSON.stringify(loadedMatches));
 
             const playersDoc = await getDoc(doc(db, 'config', 'players_list'));
             const loadedPlayers = playersDoc.data()?.names || [];
@@ -1096,9 +1097,7 @@ function App() {
       
       if (updatedCount > 0) {
         setMatches(updatedMatches);
-        if (!isOnlineMode) {
-          localStorage.setItem('wc26_matches', JSON.stringify(updatedMatches));
-        }
+        localStorage.setItem('wc26_matches', JSON.stringify(updatedMatches));
         
         // Update metadata synced time in Cloud if online
         if (isOnlineMode && db) {
@@ -1129,12 +1128,17 @@ function App() {
       const localLastSync = localStorage.getItem('wc26_last_sync_time');
       let shouldSync = false;
 
+      const hasEmptyKnockoutTeams = matches.some(m => 
+        (m.stage && m.stage !== 'vong_bang') && (!m.homeTeam || !m.awayTeam)
+      );
+
       if (!localLastSync) {
         shouldSync = true;
       } else {
         const lastSyncDate = new Date(localLastSync);
         const diffMinutes = (now - lastSyncDate) / (1000 * 60);
-        if (diffMinutes >= 10) {
+        const throttleMinutes = hasEmptyKnockoutTeams ? 1 : 10;
+        if (diffMinutes >= throttleMinutes) {
           shouldSync = true;
         }
       }
