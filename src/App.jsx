@@ -11,7 +11,9 @@ import {
   LogOut, 
   Eye, 
   Plus, 
-  Check, 
+  Check,
+  CheckCircle,
+  XCircle, 
   AlertCircle, 
   RefreshCw, 
   TrendingDown, 
@@ -70,6 +72,7 @@ function App() {
   const [expenseDesc, setExpenseDesc] = useState('');
   const [expenseAmount, setExpenseAmount] = useState('');
   const [expenseType, setExpenseType] = useState('expense');
+  const [memberContributions, setMemberContributions] = useState({}); // { playerName: { amount: number, paid: boolean } }
 
   // Popup predictions view
   const [selectedMatch, setSelectedMatch] = useState(null);
@@ -145,6 +148,11 @@ function App() {
             loadedExpenses.sort((a, b) => new Date(b.date) - new Date(a.date));
             setExpenseLogs(loadedExpenses);
 
+            const contribDoc = await getDoc(doc(db, 'config', 'contributions'));
+            if (contribDoc.exists()) {
+              setMemberContributions(contribDoc.data());  
+            }
+
             console.log("Loaded all data from Firestore.");
           } else {
             // First-time database seed. Upload data.json contents to Firestore
@@ -195,6 +203,7 @@ function App() {
     const localPins = localStorage.getItem('wc26_pins');
     const localExpenses = localStorage.getItem('wc26_expenses');
     const localRules = localStorage.getItem('wc26_rules');
+    const localContributions = localStorage.getItem('wc26_contributions');
 
     if (localMatches && localPlayers) {
       setMatches(JSON.parse(localMatches));
@@ -204,6 +213,7 @@ function App() {
       setPinsMap(JSON.parse(localPins || '{}'));
       setExpenseLogs(JSON.parse(localExpenses || '[]'));
       setRules(JSON.parse(localRules || JSON.stringify(rules)));
+      setMemberContributions(JSON.parse(localContributions || '{}'));
     } else {
       // Seed local storage with initialData
       localStorage.setItem('wc26_matches', JSON.stringify(initialData.matches));
@@ -212,6 +222,7 @@ function App() {
       localStorage.setItem('wc26_finalist_bets', JSON.stringify(initialData.finalistBets || {}));
       localStorage.setItem('wc26_pins', JSON.stringify({}));
       localStorage.setItem('wc26_expenses', JSON.stringify([]));
+      localStorage.setItem('wc26_contributions', JSON.stringify({}));
       localStorage.setItem('wc26_rules', JSON.stringify(rules));
 
       setMatches(initialData.matches);
@@ -666,8 +677,14 @@ function App() {
 
   // Expenses management computations
   const totalFinesCollected = useMemo(() => {
-    return leaderboard.reduce((acc, player) => acc + player.totalFine, 0);
-  }, [leaderboard]);
+    return leaderboard.reduce((acc, player) => {
+      if (memberContributions[player.name]?.paid) {
+        const gtgt = memberContributions[player.name]?.gtgt || 0;
+        return acc + player.totalFine + gtgt;
+      }
+      return acc;
+    }, 0);
+  }, [leaderboard, memberContributions]);
 
   const expensesSummary = useMemo(() => {
     let income = totalFinesCollected;
@@ -1255,6 +1272,31 @@ function App() {
     showToast("Đã thêm khoản chi tiêu liên hoan!", "success");
   };
 
+  // Toggle member contribution paid status
+  const handleToggleContribution = async (playerName) => {
+    if (!isAdminLoggedIn) return;
+    const current = memberContributions[playerName] || { paid: false, gtgt: 0 };
+    const updated = { ...memberContributions, [playerName]: { ...current, paid: !current.paid } };
+    setMemberContributions(updated);
+    if (isOnlineMode && db) {
+      await setDoc(doc(db, 'config', 'contributions'), updated);
+    } else {
+      localStorage.setItem('wc26_contributions', JSON.stringify(updated));
+    }
+  };
+
+  // Update GTGT amount for a player
+  const handleUpdateGtgt = async (playerName, newAmount) => {
+    const current = memberContributions[playerName] || { paid: false, gtgt: 0 };
+    const updated = { ...memberContributions, [playerName]: { ...current, gtgt: parseInt(newAmount) || 0 } };
+    setMemberContributions(updated);
+    if (isOnlineMode && db) {
+      await setDoc(doc(db, 'config', 'contributions'), updated);
+    } else {
+      localStorage.setItem('wc26_contributions', JSON.stringify(updated));
+    }
+  };
+
   // Filter matches based on selected filters
   const filteredMatches = useMemo(() => {
     return matches.filter(match => {
@@ -1275,7 +1317,8 @@ function App() {
       finalistBets,
       pinsMap,
       expenseLogs,
-      rules
+      rules,
+      memberContributions
     };
 
     const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(databaseExport, null, 2));
@@ -1302,6 +1345,7 @@ function App() {
           setPinsMap(imported.pinsMap || {});
           setExpenseLogs(imported.expenseLogs || []);
           setRules(imported.rules || rules);
+          setMemberContributions(imported.memberContributions || {});
 
           if (isOnlineMode && db) {
             // Upload everything to firebase
@@ -1329,6 +1373,7 @@ function App() {
             localStorage.setItem('wc26_pins', JSON.stringify(imported.pinsMap || {}));
             localStorage.setItem('wc26_expenses', JSON.stringify(imported.expenseLogs || []));
             localStorage.setItem('wc26_rules', JSON.stringify(imported.rules || rules));
+            localStorage.setItem('wc26_contributions', JSON.stringify(imported.memberContributions || {}));
             showToast("Đã khôi phục dữ liệu Local thành công!", "success");
           }
         } else {
@@ -1586,7 +1631,7 @@ function App() {
 
             {/* Detailed Leaderboard Table */}
             <div className="glass-panel" style={{ padding: '1.5rem' }}>
-              <h3 style={{ marginBottom: '1.25rem', fontSize: '1.1rem', fontWeight: 700 }}>Danh Sách Đóng Phạt Chi Tiết</h3>
+              <h3 style={{ marginBottom: '1.25rem', fontSize: '1.1rem', fontWeight: 700 }}>Đóng Quỹ Liên Hoan</h3>
               <div className="table-container">
                 <table className="leaderboard-table">
                   <thead>
@@ -1609,6 +1654,9 @@ function App() {
                       <th className="sortable" onClick={() => handleSort('wrongOutcomes')}>
                         Sai Bét {renderSortIcon('wrongOutcomes')}
                       </th>
+                      <th>GTGT</th>
+                      <th>Tổng Cộng</th>
+                      <th>Trạng Thái</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -1647,6 +1695,63 @@ function App() {
                           </td>
                           <td>
                             <span style={{ color: 'var(--text-muted)', fontWeight: 600 }}>{player.wrongOutcomes}</span>
+                          </td>
+                          <td>
+                            {isAdminLoggedIn ? (
+                              <input
+                                type="number"
+                                value={memberContributions[player.name]?.gtgt || 0}
+                                min={0}
+                                step={10000}
+                                onChange={(e) => handleUpdateGtgt(player.name, e.target.value)}
+                                className="text-input"
+                                style={{ width: '100px', padding: '0.3rem 0.5rem', textAlign: 'right', fontSize: '0.85rem' }}
+                              />
+                            ) : (
+                              <span style={{ fontWeight: 600 }}>{(memberContributions[player.name]?.gtgt || 0).toLocaleString()}đ</span>
+                            )}
+                          </td>
+                          <td>
+                            <span style={{ fontWeight: 700, color: 'var(--color-gold)' }}>
+                              {(player.totalFine + (memberContributions[player.name]?.gtgt || 0)).toLocaleString()}đ
+                            </span>
+                          </td>
+                          <td>
+                            {isAdminLoggedIn ? (
+                              <button
+                                onClick={() => handleToggleContribution(player.name)}
+                                className="contribution-toggle-btn"
+                                style={{
+                                  background: memberContributions[player.name]?.paid ? 'rgba(34, 197, 94, 0.15)' : 'rgba(239, 68, 68, 0.15)',
+                                  color: memberContributions[player.name]?.paid ? 'var(--color-success)' : 'var(--color-danger)',
+                                  border: `1px solid ${memberContributions[player.name]?.paid ? 'rgba(34, 197, 94, 0.3)' : 'rgba(239, 68, 68, 0.3)'}`,
+                                  padding: '0.35rem 0.75rem',
+                                  borderRadius: '8px',
+                                  cursor: 'pointer',
+                                  fontSize: '0.8rem',
+                                  fontWeight: 700,
+                                  display: 'inline-flex',
+                                  alignItems: 'center',
+                                  gap: '0.35rem',
+                                  transition: 'all 0.2s ease'
+                                }}
+                              >
+                                {memberContributions[player.name]?.paid ? <CheckCircle size={14} /> : <XCircle size={14} />}
+                                {memberContributions[player.name]?.paid ? 'Đã đóng' : 'Chưa đóng'}
+                              </button>
+                            ) : (
+                              <span style={{
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: '0.35rem',
+                                fontWeight: 600,
+                                fontSize: '0.85rem',
+                                color: memberContributions[player.name]?.paid ? 'var(--color-success)' : 'var(--color-danger)'
+                              }}>
+                                {memberContributions[player.name]?.paid ? <CheckCircle size={14} /> : <XCircle size={14} />}
+                                {memberContributions[player.name]?.paid ? 'Đã đóng' : 'Chưa đóng'}
+                              </span>
+                            )}
                           </td>
                         </tr>
                       );
@@ -2219,7 +2324,7 @@ function App() {
                   <Coins size={24} />
                 </div>
                 <div className="stat-info">
-                  <span className="stat-label">Tổng Quỹ Phạt Đã Thu</span>
+                  <span className="stat-label">Tổng Đã Thu (Đã đóng)</span>
                   <span className="stat-value" style={{ color: 'var(--color-success)' }}>
                     {totalFinesCollected.toLocaleString()}đ
                   </span>
@@ -2318,7 +2423,7 @@ function App() {
                     {/* Add initial income balance if any */}
                     <tr className="leaderboard-row">
                       <td style={{ color: 'var(--text-muted)' }}>Hệ thống</td>
-                      <td style={{ fontWeight: 600 }}>Quỹ phạt thu từ trò chơi dự đoán</td>
+                      <td style={{ fontWeight: 600 }}>Quỹ đóng góp liên hoan (Phạt + GTGT, chỉ tính đã đóng)</td>
                       <td style={{ color: 'var(--color-success)' }}>Thu nhập</td>
                       <td style={{ fontWeight: 700, color: 'var(--color-success)' }}>+{totalFinesCollected.toLocaleString()}đ</td>
                     </tr>
