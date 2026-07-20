@@ -676,10 +676,20 @@ function App() {
   }, [players, matches, rules]);
 
   // Expenses management computations
-  const totalFinesCollected = useMemo(() => {
+  const totalFinesAll = useMemo(() => {
     return leaderboard.reduce((acc, player) => {
       const gtgt = memberContributions[player.name]?.gtgt || 0;
       return acc + player.totalFine + gtgt;
+    }, 0);
+  }, [leaderboard, memberContributions]);
+
+  const totalFinesCollected = useMemo(() => {
+    return leaderboard.reduce((acc, player) => {
+      if (memberContributions[player.name]?.paid) {
+        const gtgt = memberContributions[player.name]?.gtgt || 0;
+        return acc + player.totalFine + gtgt;
+      }
+      return acc;
     }, 0);
   }, [leaderboard, memberContributions]);
 
@@ -1460,7 +1470,7 @@ function App() {
           <div className="stat-info">
             <span className="stat-label">Tổng Quỹ Phạt</span>
             <span className="stat-value" style={{ color: 'var(--color-warning)' }}>
-              {totalFinesCollected.toLocaleString()}đ
+              {totalFinesAll.toLocaleString()}đ
             </span>
           </div>
         </div>
@@ -2321,7 +2331,7 @@ function App() {
                   <Coins size={24} />
                 </div>
                 <div className="stat-info">
-                  <span className="stat-label">Tổng Quỹ Phạt (gồm GTGT)</span>
+                  <span className="stat-label">Tổng Quỹ Phạt Đã Thu (gồm GTGT)</span>
                   <span className="stat-value" style={{ color: 'var(--color-success)' }}>
                     {totalFinesCollected.toLocaleString()}đ
                   </span>
@@ -2420,7 +2430,7 @@ function App() {
                     {/* Add initial income balance if any */}
                     <tr className="leaderboard-row">
                       <td style={{ color: 'var(--text-muted)' }}>Hệ thống</td>
-                      <td style={{ fontWeight: 600 }}>Tổng quỹ phạt + GTGT từ trò chơi dự đoán</td>
+                      <td style={{ fontWeight: 600 }}>Quỹ phạt + GTGT đã thu từ các thành viên đã đóng</td>
                       <td style={{ color: 'var(--color-success)' }}>Thu nhập</td>
                       <td style={{ fontWeight: 700, color: 'var(--color-success)' }}>+{totalFinesCollected.toLocaleString()}đ</td>
                     </tr>
