@@ -712,6 +712,35 @@ function App() {
     };
   }, [totalFinesCollected, expenseLogs]);
 
+  // Combined logs for Nhật Ký Chi Liên Hoan (includes paid member contributions + manual expense logs)
+  const combinedExpenseLogs = useMemo(() => {
+    const paidContributionLogs = leaderboard
+      .filter(player => memberContributions[player.name]?.paid)
+      .map(player => {
+        const contrib = memberContributions[player.name];
+        const gtgt = contrib?.gtgt || 0;
+        const totalAmount = player.totalFine + gtgt;
+        return {
+          id: `contrib_${player.name}`,
+          date: contrib?.paidAt || new Date().toISOString(),
+          description: `Thu quỹ phạt + GTGT - ${player.name}`,
+          type: 'income',
+          amount: totalAmount,
+          isContribution: true,
+          playerName: player.name
+        };
+      });
+
+    const manualLogs = expenseLogs.map((log, index) => ({
+      ...log,
+      id: log.id || `manual_log_${index}`
+    }));
+
+    const combined = [...paidContributionLogs, ...manualLogs];
+    combined.sort((a, b) => new Date(b.date) - new Date(a.date));
+    return combined;
+  }, [leaderboard, memberContributions, expenseLogs]);
+
   // Initialise selectedPlayer default
   useEffect(() => {
     if (players.length > 0 && !selectedPlayer) {
@@ -1283,7 +1312,15 @@ function App() {
   const handleToggleContribution = async (playerName) => {
     if (!isAdminLoggedIn) return;
     const current = memberContributions[playerName] || { paid: false, gtgt: 0 };
-    const updated = { ...memberContributions, [playerName]: { ...current, paid: !current.paid } };
+    const nextPaid = !current.paid;
+    const updated = {
+      ...memberContributions,
+      [playerName]: {
+        ...current,
+        paid: nextPaid,
+        paidAt: nextPaid ? new Date().toISOString() : null
+      }
+    };
     setMemberContributions(updated);
     if (isOnlineMode && db) {
       await setDoc(doc(db, 'config', 'contributions'), updated);
@@ -2420,34 +2457,41 @@ function App() {
                 <table className="leaderboard-table">
                   <thead>
                     <tr>
-                      <th>Ngày</th>
+                      <th>Thời Gian / Ngày</th>
                       <th>Khoản mục</th>
                       <th>Thu/Chi</th>
                       <th>Số tiền</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {/* Add initial income balance if any */}
-                    <tr className="leaderboard-row">
-                      <td style={{ color: 'var(--text-muted)' }}>Hệ thống</td>
-                      <td style={{ fontWeight: 600 }}>Quỹ phạt + GTGT đã thu từ các thành viên đã đóng</td>
-                      <td style={{ color: 'var(--color-success)' }}>Thu nhập</td>
-                      <td style={{ fontWeight: 700, color: 'var(--color-success)' }}>+{totalFinesCollected.toLocaleString()}đ</td>
-                    </tr>
-                    {expenseLogs.map((log, idx) => (
-                      <tr key={idx} className="leaderboard-row">
-                        <td style={{ color: 'var(--text-muted)' }}>
-                          {new Date(log.date).toLocaleDateString('vi-VN')}
-                        </td>
-                        <td style={{ fontWeight: 600 }}>{log.description}</td>
-                        <td style={{ color: log.type === 'expense' ? 'var(--color-danger)' : 'var(--color-success)' }}>
-                          {log.type === 'expense' ? 'Chi ra' : 'Thu vào'}
-                        </td>
-                        <td style={{ fontWeight: 700, color: log.type === 'expense' ? 'var(--color-danger)' : 'var(--color-success)' }}>
-                          {log.type === 'expense' ? '-' : '+'}{log.amount.toLocaleString()}đ
+                    {combinedExpenseLogs.length === 0 ? (
+                      <tr className="leaderboard-row">
+                        <td colSpan={4} style={{ textAlign: 'center', color: 'var(--text-muted)', padding: '1.5rem' }}>
+                          Chưa có nhật ký thu chi nào
                         </td>
                       </tr>
-                    ))}
+                    ) : (
+                      combinedExpenseLogs.map((log, idx) => (
+                        <tr key={log.id || idx} className="leaderboard-row">
+                          <td style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>
+                            {log.date ? new Date(log.date).toLocaleString('vi-VN', {
+                              hour: '2-digit',
+                              minute: '2-digit',
+                              day: '2-digit',
+                              month: '2-digit',
+                              year: 'numeric'
+                            }) : '-'}
+                          </td>
+                          <td style={{ fontWeight: 600 }}>{log.description}</td>
+                          <td style={{ color: log.type === 'expense' ? 'var(--color-danger)' : 'var(--color-success)' }}>
+                            {log.type === 'expense' ? 'Chi ra' : 'Thu vào'}
+                          </td>
+                          <td style={{ fontWeight: 700, color: log.type === 'expense' ? 'var(--color-danger)' : 'var(--color-success)' }}>
+                            {log.type === 'expense' ? '-' : '+'}{log.amount.toLocaleString()}đ
+                          </td>
+                        </tr>
+                      ))
+                    )}
                   </tbody>
                 </table>
               </div>
